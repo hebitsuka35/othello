@@ -7,7 +7,7 @@ export default function Home() {
   // [コメント]turnColorは自分のオセロの石の色を意味する。1は黒、2は白を意味する。
   const [turnColor, setTurnColor] = useState(1);
   // [コメント]AitenoColorは相手のオセロの石の色を意味する。turnColorが1の場合は2,2の場合は1になる。
-  const AItenoColor = 3 - turnColor;
+  const AitenoColor = 3 - turnColor;
   //[コメント]boardはオセロの盤面を意味する。
   const [board, setBoard] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -34,26 +34,26 @@ export default function Home() {
 
   const onClick = (x: number, y: number) => {
     const newBoard = structuredClone(board);
-    //[個人用メモ]盤面最上段にはみ出さないよう、かつ、下の盤面が相手のオセロの石の色の場合は、上の盤面を反転する
-    if (board[y + 1] !== undefined && board[y + 1][x] === AItenoColor) {
+    //[個人用メモ]盤面最上段にはみ出さないよう、かつ、下の盤面が相手のオセロの石の色の場合は、上の盤面に自分のオセロの色を載せれるようにする。
+    if (board[y + 1] !== undefined && board[y + 1][x] === AitenoColor) {
       newBoard[y][x] = turnColor;
-      setTurnColor(AItenoColor);
+      setTurnColor(AitenoColor);
     }
-    //[個人用メモ]盤面最下段にはみ出さないよう、かつ、上の盤面が相手のオセロの石の色の場合は、下の盤面を反転する
-    if (board[y - 1] !== undefined && board[y - 1][x] === AItenoColor) {
+    //[個人用メモ]盤面最下段にはみ出さないよう、かつ、上の盤面が相手のオセロの石の色の場合は、下の盤面に自分のオセロの色を載せれるようにする。
+    if (board[y - 1] !== undefined && board[y - 1][x] === AitenoColor) {
       newBoard[y][x] = turnColor;
-      setTurnColor(AItenoColor);
+      setTurnColor(AitenoColor);
     }
     setBoard(newBoard);
-    //[個人用メモ]盤面最右段にはみ出さないよう、かつ、左の盤面が相手のオセロの石の色の場合は、右の盤面を反転する
-    if (board[x + 1] !== undefined && board[y][x - 1] === AItenoColor) {
+    //[個人用メモ]盤面最右段にはみ出さないよう、かつ、左の盤面が相手のオセロの石の色の場合は、右の盤面に自分のオセロの色を載せれるようにする。
+    if (board[y][x + 1] !== undefined && board[y][x + 1] === AitenoColor) {
       newBoard[y][x] = turnColor;
-      setTurnColor(AItenoColor);
+      setTurnColor(AitenoColor);
     }
-    //[個人用メモ]盤面最左段にはみ出さないよう、かつ、右の盤面が相手のオセロの石の色の場合は、左の盤面を反転する
-    if (board[x - 1] !== undefined && board[y][x + 1] === AItenoColor) {
+    //[個人用メモ]盤面最左段にはみ出さないよう、かつ、右の盤面が相手のオセロの石の色の場合は、左の盤面に自分のオセロの色を載せれるようにする。
+    if (board[y][x - 1] !== undefined && board[y][x - 1] === AitenoColor) {
       newBoard[y][x] = turnColor;
-      setTurnColor(AItenoColor);
+      setTurnColor(AitenoColor);
     }
 
     setBoard(newBoard);
