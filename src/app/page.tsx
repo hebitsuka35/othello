@@ -22,7 +22,24 @@ export default function Home() {
 
   const onClick = (x: number, y: number) => {
     const newBoard = structuredClone(board);
+    //盤面最上段にはみ出さないよう、かつ、下の盤面が相手のオセロの石の色の場合は、上の盤面を反転する
     if (board[y + 1] !== undefined && board[y + 1][x] === AItenoColor) {
+      newBoard[y][x] = turnColor;
+      setTurnColor(AItenoColor);
+    }
+    //盤面最下段にはみ出さないよう、かつ、上の盤面が相手のオセロの石の色の場合は、下の盤面を反転する
+    if (board[y - 1] !== undefined && board[y - 1][x] === AItenoColor) {
+      newBoard[y][x] = turnColor;
+      setTurnColor(AItenoColor);
+    }
+    setBoard(newBoard);
+    //盤面最右段にはみ出さないよう、かつ、左の盤面が相手のオセロの石の色の場合は、右の盤面を反転する
+    if (board[x + 1] !== undefined && board[y][x - 1] === AItenoColor) {
+      newBoard[y][x] = turnColor;
+      setTurnColor(AItenoColor);
+    }
+    //盤面最左段にはみ出さないよう、かつ、右の盤面が相手のオセロの石の色の場合は、左の盤面を反転する
+    if (board[x - 1] !== undefined && board[y][x + 1] === AItenoColor) {
       newBoard[y][x] = turnColor;
       setTurnColor(AItenoColor);
     }
@@ -32,6 +49,7 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <div className={styles.board}>
+        {/* mapの第二引数であるy,xはインデックスを意味する。 */}
         {board.map((row, y) =>
           row.map((color, x) => (
             <div className={styles.cell} key={`${x}-${y}`} onClick={() => onClick(x, y)}>
