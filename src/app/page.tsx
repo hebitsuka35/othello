@@ -20,13 +20,17 @@ export default function Home() {
   const onClick = (x: number, y: number) => {
     console.log(x, y);
     const newBoard = structuredClone(board);
-    newBoard[y][x] = turnColor;
-    setBoard(newBoard);
-    if (turnColor === 1) {
-      setTurnColor(2);
-    } else {
-      setTurnColor(1);
+
+    if (board[y + 1] !== undefined && board[y + 1][x] === -turnColor + 3) {
+      newBoard[y][x] = turnColor;
+      setTurnColor(-turnColor + 3);
     }
+
+    // setBoard(newBoard);
+    // newBoard[y][x] = turnColor;
+    setBoard(newBoard);
+
+    // setTurnColor(-turnColor + 3);
   };
 
   return (
