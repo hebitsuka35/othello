@@ -6,8 +6,8 @@ import styles from './page.module.css';
 export default function Home() {
   // [コメント]turnColorは自分のオセロの石の色を意味する。1は黒、2は白を意味する。
   const [turnColor, setTurnColor] = useState(1);
-  // [コメント]AitenoColorは相手のオセロの石の色を意味する。turnColorが1の場合は2,2の場合は1になる。
-  const AitenoColor = 3 - turnColor;
+  // [コメント]OppoColorは相手のオセロの石の色を意味する。turnColorが1の場合は2,2の場合は1になる。
+  const OppoColor = 2 / turnColor;
   //[コメント]boardはオセロの盤面を意味する。
   const [board, setBoard] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -35,25 +35,25 @@ export default function Home() {
   const onClick = (x: number, y: number) => {
     const newBoard = structuredClone(board);
     //[個人用メモ]盤面最上段にはみ出さないよう、かつ、下の盤面が相手のオセロの石の色の場合は、上の盤面に自分のオセロの色を載せれるようにする。
-    if (board[y + 1] !== undefined && board[y + 1][x] === AitenoColor) {
+    if (board[y + 1] !== undefined && board[y + 1][x] === OppoColor) {
       newBoard[y][x] = turnColor;
-      setTurnColor(AitenoColor);
+      setTurnColor(OppoColor);
     }
     //[個人用メモ]盤面最下段にはみ出さないよう、かつ、上の盤面が相手のオセロの石の色の場合は、下の盤面に自分のオセロの色を載せれるようにする。
-    if (board[y - 1] !== undefined && board[y - 1][x] === AitenoColor) {
+    if (board[y - 1] !== undefined && board[y - 1][x] === OppoColor) {
       newBoard[y][x] = turnColor;
-      setTurnColor(AitenoColor);
+      setTurnColor(OppoColor);
     }
     setBoard(newBoard);
     //[個人用メモ]盤面最右段にはみ出さないよう、かつ、左の盤面が相手のオセロの石の色の場合は、右の盤面に自分のオセロの色を載せれるようにする。
-    if (board[y][x + 1] !== undefined && board[y][x + 1] === AitenoColor) {
+    if (board[y][x + 1] !== undefined && board[y][x + 1] === OppoColor) {
       newBoard[y][x] = turnColor;
-      setTurnColor(AitenoColor);
+      setTurnColor(OppoColor);
     }
     //[個人用メモ]盤面最左段にはみ出さないよう、かつ、右の盤面が相手のオセロの石の色の場合は、左の盤面に自分のオセロの色を載せれるようにする。
-    if (board[y][x - 1] !== undefined && board[y][x - 1] === AitenoColor) {
+    if (board[y][x - 1] !== undefined && board[y][x - 1] === OppoColor) {
       newBoard[y][x] = turnColor;
-      setTurnColor(AitenoColor);
+      setTurnColor(OppoColor);
     }
 
     setBoard(newBoard);
