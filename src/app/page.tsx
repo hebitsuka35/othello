@@ -4,11 +4,12 @@ import { useState } from 'react';
 import styles from './page.module.css';
 
 export default function Home() {
-  // [コメント]turnColorは自分のオセロの石の色を意味する。1は黒、2は白を意味する。
+  // turnColorは自分のオセロの石の色を意味する。1は黒、2は白を意味する。
   const [turnColor, setTurnColor] = useState(1);
-  // [コメント]OppoColorは相手のオセロの石の色を意味する。turnColorが1の場合は2,2の場合は1になる。
+  // OppoColorは相手のオセロの石の色を意味する。turnColorが1の場合は2,2の場合は1になる
+  // つまりturnColorが反転するようになっている。
   const OppoColor = 3 - turnColor;
-  //[コメント]boardはオセロの盤面を意味する。
+  //　boardはオセロの盤面を意味する。
   const [board, setBoard] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -20,7 +21,7 @@ export default function Home() {
     [0, 0, 0, 0, 0, 0, 0, 0],
   ]);
 
-  //[コメント]directionsは自分のオセロの盤面における位置ベクトルを意味する。
+  //　directionsは自分の石の色からのオセロの盤面におけるベクトルを意味する。
   const directions = [
     [1, 0], //下
     [1, 1], //右下
@@ -32,31 +33,45 @@ export default function Home() {
     [1, -1], //左下
   ];
 
-  //盤面の範囲内かどうかを判定する関数を意味する。
+  //盤面の範囲内 0以上から8未満かどうかを判定する関数を意味する。
   const isInBanmen = (x: number, y: number): boolean => {
     return x >= 0 && x < 8 && y >= 0 && y < 8;
   };
 
-  //石を置けるかどうかをチェックする関数を意味する。
+  //自分の石を盤面に置けるかどうかをチェックする関数を意味する。
   const isValidMove = (x: number, y: number, board: number[][]): boolean => {
+    //盤面が0以外の場合は自分の石を盤面に置けないので、チェック関数を抜ける、つまり置けないことを意味する。
     if (board[y][x] !== 0) return false;
 
+    //自分の石を盤面に置けるかどうかを判定するためのフラグを意味する。
     let isValid = false;
+    //directionsの第一引数と第二引数をfor文でそれぞれdx,dyで取得する
     for (const [dx, dy] of directions) {
+      //xにdxを加えてnewXを定義する。つまり上下の情報をnewXに格納する。
       let newX = x + dx;
+      //yにdyを加えてnewYを定義する。つまり左右の情報をnewYに格納する。
       let newY = y + dy;
+
+      //相手の色の石があるかどうかを判定するフラグを意味する。
       let foundOpponent = false;
 
+      // newX,newYが0-7の間にありかつ相手の色の場合
       while (isInBanmen(newX, newY) && board[newY][newX] === OppoColor) {
+        //相手の色の石があることをtrueにして判定する。
         foundOpponent = true;
+        // newXにdxの値(1 | -1)を入れて、newXに格納する。
         newX += dx;
+        // newYにdyの値(1 | -1)を入れて、newYに格納する。
         newY += dy;
       }
 
+      // 相手の色がある場合、かつ盤面が0-7の間の場合　かつ　newY,newXが自分の色の場合
       if (foundOpponent && isInBanmen(newX, newY) && board[newY][newX] === turnColor) {
+        //有効にする。
         isValid = true;
       }
     }
+    //有効であることを返却する。
     return isValid;
   };
 
@@ -65,18 +80,21 @@ export default function Home() {
     for (const [dx, dy] of directions) {
       let newX = x + dx;
       let newY = y + dy;
+      // flipPositionsの空の配列を意味する　反転対象の相手の石の座様を意味する。
       const flipPositions: [number, number][] = [];
 
-      //盤面の範囲内かつ相手の石がある場合
+      //盤面の範囲内かつ相手の石がある場合、相手の石を探してflipPositionsに格納する。
       while (isInBanmen(newX, newY) && newBoard[newY][newX] === OppoColor) {
+        //newXとnewYをflipPosions格納する。while文により相手の色が連続している場合にflipPositionsに追加する。
         flipPositions.push([newX, newY]);
         newX += dx;
         newY += dy;
       }
 
-      //自分の石に挟まれていたら間の石を反転させる。
+      //最後に自分の石に挟まれていたら間の石を反転させる。
       if (isInBanmen(newX, newY) && newBoard[newY][newX] === turnColor) {
         for (const [flipX, flipY] of flipPositions) {
+          //反転対象の石を自分の色に変える
           newBoard[flipY][flipX] = turnColor;
         }
       }
