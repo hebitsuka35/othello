@@ -39,7 +39,7 @@ export default function Home() {
 
   //石を置けるかどうかをチェックする関数を意味する。
   const isValidMove = (x: number, y: number, board: number[][]): boolean => {
-    if (board[y][x] != 0) return false;
+    if (board[y][x] !== 0) return false;
 
     let isValid = false;
     for (const [dx, dy] of directions) {
