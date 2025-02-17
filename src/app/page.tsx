@@ -9,7 +9,7 @@ export default function Home() {
   // OppoColorは相手のオセロの石の色を意味する。turnColorが1の場合は2,2の場合は1になる
   // つまりturnColorが反転するようになっている。
   const OppoColor = 3 - turnColor;
-  //　boardはオセロの盤面を意味する。
+  //boardはオセロの盤面を意味する。
   const [board, setBoard] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -21,7 +21,7 @@ export default function Home() {
     [0, 0, 0, 0, 0, 0, 0, 0],
   ]);
 
-  //　directionsは自分の石の色からのオセロの盤面におけるベクトルを意味する。
+  //directionsは自分の石の色からのオセロの盤面におけるベクトルを意味する。
   const directions = [
     [1, 0], //下
     [1, 1], //右下
@@ -65,7 +65,7 @@ export default function Home() {
         newY += dy;
       }
 
-      // 相手の色がある場合、かつ盤面が0-7の間の場合　かつ　newY,newXが自分の色の場合
+      // 相手の色がある場合、かつ盤面が0-7の間の場合かつnewY,newXが自分の色の場合
       if (foundOpponent && isInBanmen(newX, newY) && board[newY][newX] === turnColor) {
         //有効にする。
         isValid = true;
@@ -80,7 +80,7 @@ export default function Home() {
     for (const [dx, dy] of directions) {
       let newX = x + dx;
       let newY = y + dy;
-      // flipPositionsの空の配列を意味する　反転対象の相手の石の座様を意味する。
+      // flipPositionsの空の配列を意味する。反転対象の相手の石の座標を意味する。
       const flipPositions: [number, number][] = [];
 
       //盤面の範囲内かつ相手の石がある場合、相手の石を探してflipPositionsに格納する。
@@ -102,33 +102,100 @@ export default function Home() {
   };
 
   const onClick = (x: number, y: number) => {
-    //石がある場合は何もしない
+    //自分の石が置けない場合は何もしない
     if (!isValidMove(x, y, board)) return;
-
+    // newBoardにboardを複写して格納する。
     const newBoard = structuredClone(board);
+    //newBoardの色を自分の石の色に変更する。
     newBoard[y][x] = turnColor;
+    //newBoardとx,y座標から反転できる石を見つける
     flipAllDirections(x, y, newBoard);
+    //反転したnewBoardの状態にboardを変更する。
     setBoard(newBoard);
+    //色を反転させる。
     setTurnColor(OppoColor);
   };
 
+  //初期盤面の状態に変更する。
+  const resetBoard = () => {
+    setBoard([
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 1, 2, 0, 0, 0],
+      [0, 0, 0, 2, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+    ]);
+    //自分の石の色を黒に戻す
+    setTurnColor(1);
+  };
+
+  //現在のターンを表示する
+  const displayTurnColor = () => {
+    return turnColor === 1 ? '黒のターン' : '白のターン';
+  };
+
+  //黒の数と白の数を表示する。
+  const countStones = (board: number[][]) => {
+    let blackCount = 0;
+    let whiteCount = 0;
+
+    for (let y = 0; y < 8; y++) {
+      for (let x = 0; x < 8; x++) {
+        if (board[y][x] === 1) blackCount++;
+        if (board[y][x] === 2) whiteCount++;
+      }
+    }
+    return { blackCount, whiteCount };
+  };
+
+  const { blackCount, whiteCount } = countStones(board);
+
+  //白と黒の数を比較して、勝ち負けを表示する。
+  const winnerColor = () => {
+    if (blackCount > whiteCount) {
+      return '黒の勝ち';
+    } else if (whiteCount > blackCount) {
+      return '白の勝ち';
+    } else {
+      return '引き分け';
+    }
+  };
+
   return (
-    <div className={styles.container}>
-      <div className={styles.board}>
-        {/* [個人用メモ]mapの第二引数であるy,xはインデックスを意味する。 */}
-        {board.map((row, y) =>
-          row.map((color, x) => (
-            <div className={styles.cell} key={`${x}-${y}`} onClick={() => onClick(x, y)}>
-              {color !== 0 && (
-                <div
-                  className={styles.stone}
-                  style={{ background: color === 1 ? '#000' : '#fff' }}
-                />
-              )}
-            </div>
-          )),
-        )}
+    <>
+      <div className={styles.header}>
+        <div className={styles.title}>オセロ</div>
       </div>
-    </div>
+      <div>現在のターン：{displayTurnColor()}</div>
+      <div>
+        黒の石の数：{blackCount} | 白の石の数：{whiteCount}
+      </div>
+      <div>勝敗：{winnerColor()}</div>
+      <div className={styles.header}>
+        <button className={styles.resetButton} onClick={resetBoard}>
+          リセット
+        </button>
+      </div>
+      <div className={styles.container}>
+        <div className={styles.board}>
+          {/* [個人用メモ]mapの第二引数であるy,xはインデックスを意味する。 */}
+          {board.map((row, y) =>
+            row.map((color, x) => (
+              <div className={styles.cell} key={`${x}-${y}`} onClick={() => onClick(x, y)}>
+                {color !== 0 && (
+                  <div
+                    className={styles.stone}
+                    style={{ background: color === 1 ? '#000' : '#fff' }}
+                  />
+                )}
+              </div>
+            )),
+          )}
+        </div>
+      </div>
+    </>
   );
 }

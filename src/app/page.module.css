@@ -1,3 +1,19 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  text-align: center;
+}
+
+.resetButton {
+  background-color: white;
+  border: 1px solid gray;
+  border-radius: 10%;
+}
+
 .container {
   display: flex;
   flex-direction: column;
