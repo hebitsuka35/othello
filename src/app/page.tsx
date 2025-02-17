@@ -7,7 +7,7 @@ export default function Home() {
   // [コメント]turnColorは自分のオセロの石の色を意味する。1は黒、2は白を意味する。
   const [turnColor, setTurnColor] = useState(1);
   // [コメント]OppoColorは相手のオセロの石の色を意味する。turnColorが1の場合は2,2の場合は1になる。
-  const OppoColor = 2 / turnColor;
+  const OppoColor = 3 - turnColor;
   //[コメント]boardはオセロの盤面を意味する。
   const [board, setBoard] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -32,31 +32,66 @@ export default function Home() {
     [1, -1], //左下
   ];
 
-  const onClick = (x: number, y: number) => {
-    const newBoard = structuredClone(board);
-    //[個人用メモ]盤面最上段にはみ出さないよう、かつ、下の盤面が相手のオセロの石の色の場合は、上の盤面に自分のオセロの色を載せれるようにする。
-    if (board[y + 1] !== undefined && board[y + 1][x] === OppoColor) {
-      newBoard[y][x] = turnColor;
-      setTurnColor(OppoColor);
-    }
-    //[個人用メモ]盤面最下段にはみ出さないよう、かつ、上の盤面が相手のオセロの石の色の場合は、下の盤面に自分のオセロの色を載せれるようにする。
-    if (board[y - 1] !== undefined && board[y - 1][x] === OppoColor) {
-      newBoard[y][x] = turnColor;
-      setTurnColor(OppoColor);
-    }
-    setBoard(newBoard);
-    //[個人用メモ]盤面最右段にはみ出さないよう、かつ、左の盤面が相手のオセロの石の色の場合は、右の盤面に自分のオセロの色を載せれるようにする。
-    if (board[y][x + 1] !== undefined && board[y][x + 1] === OppoColor) {
-      newBoard[y][x] = turnColor;
-      setTurnColor(OppoColor);
-    }
-    //[個人用メモ]盤面最左段にはみ出さないよう、かつ、右の盤面が相手のオセロの石の色の場合は、左の盤面に自分のオセロの色を載せれるようにする。
-    if (board[y][x - 1] !== undefined && board[y][x - 1] === OppoColor) {
-      newBoard[y][x] = turnColor;
-      setTurnColor(OppoColor);
-    }
+  //盤面の範囲内かどうかを判定する関数を意味する。
+  const isInBanmen = (x: number, y: number): boolean => {
+    return x >= 0 && x < 8 && y >= 0 && y < 8;
+  };
 
+  //石を置けるかどうかをチェックする関数を意味する。
+  const isValidMove = (x: number, y: number, board: number[][]): boolean => {
+    if (board[y][x] != 0) return false;
+
+    let isValid = false;
+    for (const [dx, dy] of directions) {
+      let newX = x + dx;
+      let newY = y + dy;
+      let foundOpponent = false;
+
+      while (isInBanmen(newX, newY) && board[newY][newX] === OppoColor) {
+        foundOpponent = true;
+        newX += dx;
+        newY += dy;
+      }
+
+      if (foundOpponent && isInBanmen(newX, newY) && board[newY][newX] === turnColor) {
+        isValid = true;
+      }
+    }
+    return isValid;
+  };
+
+  //turnColorをおいた八方の色を反転させる関数を意味する。
+  const flipAllDirections = (x: number, y: number, newBoard: number[][]) => {
+    for (const [dx, dy] of directions) {
+      let newX = x + dx;
+      let newY = y + dy;
+      const flipPositions: [number, number][] = [];
+
+      //盤面の範囲内かつ相手の石がある場合
+      while (isInBanmen(newX, newY) && newBoard[newY][newX] === OppoColor) {
+        flipPositions.push([newX, newY]);
+        newX += dx;
+        newY += dy;
+      }
+
+      //自分の石に挟まれていたら間の石を反転させる。
+      if (isInBanmen(newX, newY) && newBoard[newY][newX] === turnColor) {
+        for (const [flipX, flipY] of flipPositions) {
+          newBoard[flipY][flipX] = turnColor;
+        }
+      }
+    }
+  };
+
+  const onClick = (x: number, y: number) => {
+    //石がある場合は何もしない
+    if (!isValidMove(x, y, board)) return;
+
+    const newBoard = structuredClone(board);
+    newBoard[y][x] = turnColor;
+    flipAllDirections(x, y, newBoard);
     setBoard(newBoard);
+    setTurnColor(OppoColor);
   };
 
   return (
