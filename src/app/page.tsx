@@ -34,15 +34,14 @@ export default function Home() {
   ];
 
   //盤面の範囲内 0以上から8未満かどうかを判定する関数を意味する。
-  const isInBanmen = (x: number, y: number): boolean => {
+  const isInBoard = (x: number, y: number): boolean => {
     return x >= 0 && x < 8 && y >= 0 && y < 8;
   };
 
   //自分の石を盤面に置けるかどうかをチェックする関数を意味する。
   const isValidMove = (x: number, y: number, board: number[][]): boolean => {
-    //盤面が0以外の場合は自分の石を盤面に置けないので、チェック関数を抜ける、つまり置けないことを意味する。
+    //まず置けるかどうかチェックする
     if (board[y][x] !== 0) return false;
-
     //自分の石を盤面に置けるかどうかを判定するためのフラグを意味する。
     let isValid = false;
     //directionsの第一引数と第二引数をfor文でそれぞれdx,dyで取得する
@@ -51,12 +50,10 @@ export default function Home() {
       let newX = x + dx;
       //yにdyを加えてnewYを定義する。つまり左右の情報をnewYに格納する。
       let newY = y + dy;
-
       //相手の色の石があるかどうかを判定するフラグを意味する。
       let foundOpponent = false;
-
-      // newX,newYが0-7の間にありかつ相手の色の場合
-      while (isInBanmen(newX, newY) && board[newY][newX] === OppoColor) {
+      // 相手の石に辿り着くnewX,newYが盤面の範囲内の0-7の間にありかつ相手の色の場合
+      while (isInBoard(newX, newY) && board[newY][newX] === OppoColor) {
         //相手の色の石があることをtrueにして判定する。
         foundOpponent = true;
         // newXにdxの値(1 | -1)を入れて、newXに格納する。
@@ -64,9 +61,8 @@ export default function Home() {
         // newYにdyの値(1 | -1)を入れて、newYに格納する。
         newY += dy;
       }
-
       // 相手の色がある場合、かつ盤面が0-7の間の場合かつnewY,newXが自分の色の場合
-      if (foundOpponent && isInBanmen(newX, newY) && board[newY][newX] === turnColor) {
+      if (foundOpponent && isInBoard(newX, newY) && board[newY][newX] === turnColor) {
         //有効にする。
         isValid = true;
       }
@@ -80,19 +76,19 @@ export default function Home() {
     for (const [dx, dy] of directions) {
       let newX = x + dx;
       let newY = y + dy;
-      // flipPositionsの空の配列を意味する。反転対象の相手の石の座標を意味する。
+      //flipPositionsの空の配列を意味する。反転対象の相手の石の座標を意味する。
+      //反転できる座標をflipPositions[number,number]の配列
+      //例としてflipPositions[行,列]の[]に格納していく。
       const flipPositions: [number, number][] = [];
-
       //盤面の範囲内かつ相手の石がある場合、相手の石を探してflipPositionsに格納する。
-      while (isInBanmen(newX, newY) && newBoard[newY][newX] === OppoColor) {
+      while (isInBoard(newX, newY) && newBoard[newY][newX] === OppoColor) {
         //newXとnewYをflipPosions格納する。while文により相手の色が連続している場合にflipPositionsに追加する。
         flipPositions.push([newX, newY]);
         newX += dx;
         newY += dy;
       }
-
       //最後に自分の石に挟まれていたら間の石を反転させる。
-      if (isInBanmen(newX, newY) && newBoard[newY][newX] === turnColor) {
+      if (isInBoard(newX, newY) && newBoard[newY][newX] === turnColor) {
         for (const [flipX, flipY] of flipPositions) {
           //反転対象の石を自分の色に変える
           newBoard[flipY][flipX] = turnColor;
@@ -134,7 +130,7 @@ export default function Home() {
 
   //現在のターンを表示する
   const displayTurnColor = () => {
-    return turnColor === 1 ? '黒のターン' : '白のターン';
+    return turnColor === 1 ? '黒⚫️のターン' : '白⚪️のターン';
   };
 
   //黒の数と白の数を表示する。
@@ -153,14 +149,19 @@ export default function Home() {
 
   const { blackCount, whiteCount } = countStones(board);
 
+  // //盤面が０でない条件を記載する
+  // const isFullBoard = ():  => {
+  //   return ;
+  // };
+
   //白と黒の数を比較して、勝ち負けを表示する。
   const winnerColor = () => {
     if (blackCount > whiteCount) {
-      return '黒の勝ち';
+      alert('黒の勝ち');
     } else if (whiteCount > blackCount) {
-      return '白の勝ち';
+      alert('白の勝ち');
     } else {
-      return '引き分け';
+      alert('引き分け');
     }
   };
 
@@ -173,7 +174,6 @@ export default function Home() {
       <div>
         黒の石の数：{blackCount} | 白の石の数：{whiteCount}
       </div>
-      <div>勝敗：{winnerColor()}</div>
       <div className={styles.header}>
         <button className={styles.resetButton} onClick={resetBoard}>
           リセット
@@ -191,6 +191,7 @@ export default function Home() {
                     style={{ background: color === 1 ? '#000' : '#fff' }}
                   />
                 )}
+                {color === 0 && isValidMove(x, y, board) && <div className={styles.hint} />}
               </div>
             )),
           )}

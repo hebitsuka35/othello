@@ -47,3 +47,10 @@
   background-color: white;
   border-radius: 50%;
 }
+
+.hint {
+  width: 56px;
+  height: 56px;
+  background-color: #ffd5b2;
+  border-radius: 50%;
+}
