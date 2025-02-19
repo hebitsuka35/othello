@@ -160,66 +160,70 @@ export default function Home() {
     return { blackCount, whiteCount };
   };
 
-  //石の多い方勝者を計算する関数を意味する。
-  const checkWinner = (board: number[][]) => {
-    //現在の盤面の黒と白の石の下図を計算する関数を意味する。
-    const { blackCount, whiteCount } = countStones(board);
-    //黒い石が反転できる場所が盤面にあるかをチェックする関数を意味する。
-    const blackHasMove = hasValidMove(1, board);
-    //白い石が反転できる場所が盤面にあるかをチェックする関数を意味する。
-    const whiteHasMove = hasValidMove(2, board);
-    //黒い石と白い石の両方が反転できない状態の場合
-    if (!blackHasMove && !whiteHasMove) {
-      //かつ黒い石が白い石の数より多い場合
-      if (blackCount > whiteCount) return '黒の勝ちです。リセットボタンを押してください。';
-      //かつ白い石が黒い石の数より多い場合
-      if (whiteCount > blackCount) return '白の勝ちです。リセットボタンを押してください。';
-      //上記で無い場合は引き分けと表示する。
-      return '引き分けです。リセットボタンを押してください。';
-    }
-    return null;
-  };
+  // ここでwinnerMessageが設定されている部分を再確認します。
+const checkWinner = (board: number[][]) => {
+  const { blackCount, whiteCount } = countStones(board);
+  const blackHasMove = hasValidMove(1, board);
+  const whiteHasMove = hasValidMove(2, board);
 
-  //パスをする関数を設定する。
-  const passTurn = () => {
-    //winnerMeaageがtrue
-    if (winnerMessage) return;
-    //次のターンはturnColorつまり自分の色の反対の色をnextTurnとする。
-    const nextTurn = 3 - turnColor;
-    //盤面に動かせる石があるか
-    if (hasValidMove(nextTurn, board)) {
-      //相手の色のターンへ変更
-      setTurnColor(nextTurn);
-      //有効な手があるのでパスカントをリセットする。
-      setPassCount(0);
-    } else {
-      //newPassCountにする。
-      const newPassCount = passCount + 1;
-      // passCountをnewPasscountへ
+  // 両プレイヤーが動けない場合に結果を表示
+  if (!blackHasMove && !whiteHasMove) {
+    let resultMessage = '';
+    if (blackCount > whiteCount) resultMessage = '黒の勝ちです。リセットボタンを押してください。';
+    if (whiteCount > blackCount) resultMessage = '白の勝ちです。リセットボタンを押してください。';
+    if (blackCount === whiteCount) resultMessage = '引き分けです。リセットボタンを押してください。';
+
+    // ここでメッセージをセットします
+    setWinnerMessage(resultMessage);
+    console.log("Winner Message Set: ", resultMessage);  // メッセージが設定されているか確認
+    return resultMessage;
+  }
+
+  return null;
+};
+
+const isBoardFull = (board) => {
+  // 盤面が埋まったかどうかを確認する関数
+  return board.every(row => row.every(cell => cell !== 0)); // 盤面のすべてのセルが埋まっているか
+};
+
+const passTurn = () => {
+  if (winnerMessage) return;  // ゲームが終了している場合は何もしない
+
+  const nextTurn = 3 - turnColor;  // 次のターンの色
+  if (hasValidMove(nextTurn, board)) {  // 次のターンのプレイヤーが動けるか確認
+      setTurnColor(nextTurn);  // 次のターンに切り替え
+      setPassCount(0);  // パス回数をリセット
+  } else {
+      const newPassCount = passCount + 1;  // パス回数を増加
       setPassCount(newPassCount);
 
-      //newPassCountが2以上の場合はゲームを終了する。
-      if (newPassCount >= 2) {
-        // checkWinnerで結果を確認して、checkWinnerがあったらsetWinnerMessageにreturn文のメッセージを
-        // 格納する。
-        const result = checkWinner(board);
-        if (result) {
-          setWinnerMessage(result);
-          return;
-        }
+      if (newPassCount >= 2 || isBoardFull(board)) {  // 両プレイヤーがパスした場合または盤面が埋まった場合、ゲーム終了
+          const result = checkWinner(board);  // 勝者の確認
+          if (result) {
+              setWinnerMessage(result);  // 勝者メッセージを表示
+          }
       } else {
-        setTurnColor(nextTurn); // もう一度ターンを切り替える
+          if (passCount === 1) {
+              setWinnerMessage('両プレイヤーとも動けないので、次のターンへ');
+          }
+          setTurnColor(nextTurn);  // 次のターンに切り替え
       }
-    }
-  };
+  }
+};
+
+
+
 
   const onClick = (x: number, y: number) => {
+    if(board[y][x] !== 0) return;
     if (!isValidMove(x, y, board)) return;
-
+  
+    const newBoard = structuredClone(board);
     newBoard[y][x] = turnColor;
     flipAllDirections(x, y, newBoard);
     setBoard(newBoard);
-
+  
     const nextTurn = 3 - turnColor;
     if (hasValidMove(nextTurn, newBoard)) {
       setTurnColor(nextTurn);
@@ -227,10 +231,11 @@ export default function Home() {
     } else {
       passTurn(); // 自動的にパス処理
     }
-
-    const result = checkWinner(newBoard);
-    if (result) setWinnerMessage(result);
+  
+    const result = checkWinner(newBoard); 
+    if (result) setWinnerMessage(result); // 勝者が決まった場合にメッセージを設定
   };
+  
 
   const resetBoard = () => {
     setBoard(InitialBoard);
