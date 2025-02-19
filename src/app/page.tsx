@@ -153,7 +153,7 @@ export default function Home() {
     const result = checkWinner(newBoard);
     if (result) setWinnerMessage(result);
 
-    console.log("000");
+    console.log('9999');
   };
 
   const resetBoard = () => {
@@ -171,8 +171,6 @@ export default function Home() {
     setWinnerMessage('');
     setPassCount(0);
   };
-
-
 
   return (
     <>
