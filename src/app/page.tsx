@@ -30,7 +30,6 @@ export default function Home() {
     [1, -1],
   ];
   //UIにおけるonClickで取得できるx,y座標とboard[[,],[,],・・]におけるy:行、x:列を意味する。
-  let x, y;
 
   //// ------状態管理宣言------
   // 1: 黒, 2: 白
@@ -84,7 +83,7 @@ export default function Home() {
         distanceFromX += dx;
         distanceFromY += dy;
       }
-      //相手の色のフラグがtrueであり（相手の色がまらりにある）かつ自分の色がある場合はtrueで返却する
+      //相手の色のフラグがtrueであり（相手の色がまわりにある）かつ自分の色がある場合はtrueで返却する
       if (
         foundOpponent &&
         isInBoard(distanceFromX, distanceFromY) &&
@@ -93,7 +92,7 @@ export default function Home() {
         return true;
       }
     }
-    //上記以外の場合は、石をおけないので関数から抜ける。
+    //上記以外の場合は、石をおけないのでfor文から抜ける。
     return false;
   };
 
@@ -171,9 +170,9 @@ export default function Home() {
     const whiteHasMove = hasValidMove(2, board);
     //黒い石と白い石の両方が反転できない状態の場合
     if (!blackHasMove && !whiteHasMove) {
-      //かつ黒い石が白い石の下図より多い場合
+      //かつ黒い石が白い石の数より多い場合
       if (blackCount > whiteCount) return '黒の勝ちです。リセットボタンを押してください。';
-      //かつ白い石が黒い石の下図より多い場合
+      //かつ白い石が黒い石の数より多い場合
       if (whiteCount > blackCount) return '白の勝ちです。リセットボタンを押してください。';
       //上記で無い場合は引き分けと表示する。
       return '引き分けです。リセットボタンを押してください。';
@@ -189,7 +188,7 @@ export default function Home() {
     const nextTurn = 3 - turnColor;
     //盤面に動かせる石があるか
     if (hasValidMove(nextTurn, board)) {
-      //相手の色へ変更
+      //相手の色のターンへ変更
       setTurnColor(nextTurn);
       //有効な手があるのでパスカントをリセットする。
       setPassCount(0);
@@ -199,7 +198,7 @@ export default function Home() {
       // passCountをnewPasscountへ
       setPassCount(newPassCount);
 
-      //newPassCountが2以上の場合は
+      //newPassCountが2以上の場合はゲームを終了する。
       if (newPassCount >= 2) {
         // checkWinnerで結果を確認して、checkWinnerがあったらsetWinnerMessageにreturn文のメッセージを
         // 格納する。
