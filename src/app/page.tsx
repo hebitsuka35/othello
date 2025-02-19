@@ -5,9 +5,7 @@ import styles from './page.module.css';
 
 export default function Home() {
   //// ------変数宣言------
-  //盤面のサイズつまり縦と横の升目の下図を意味する。
   const boadsize = 8;
-  // 最初の盤面を意味する。
   const InitialBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -18,224 +16,152 @@ export default function Home() {
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
   ];
-  //盤面に置いた石からの座標軸8方向を意味する。
   const directions = [
-    [1, 0],
-    [1, 1],
-    [0, 1],
-    [-1, 1],
-    [-1, 0],
-    [-1, -1],
-    [0, -1],
-    [1, -1],
+    [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1],
   ];
-  //UIにおけるonClickで取得できるx,y座標とboard[[,],[,],・・]におけるy:行、x:列を意味する。
 
   //// ------状態管理宣言------
-  // 1: 黒, 2: 白
   const [turnColor, setTurnColor] = useState(1);
-  // 反対の色を意味する。
   const OppoColor = 3 - turnColor;
-  // 盤面の状態管理を意味する。
-  const [board, setBoard] = useState([
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 2, 0, 0, 0],
-    [0, 0, 0, 2, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-  ]);
-  // boardをnewBoardにコピーする。reactのルール上、boardを直接更新しないようにする必要があるため。
-  const newBoard = structuredClone(board);
-  // 盤面にオセロをおけないときにパスする状態を意味する。
+  const [board, setBoard] = useState(InitialBoard);
   const [passCount, setPassCount] = useState(0);
-  // 盤面で多い色が決まったときの表示メッセージを意味する。
   const [winnerMessage, setWinnerMessage] = useState('');
 
   //// ------関数宣言------
-  //  xとyすなわち置いた石の盤面における座標軸盤面の範囲内にあるのか、範囲内の場合trueをreturnする。
-  const isInBoard = (x: number, y: number): boolean =>
-    x >= 0 && x < boadsize && y >= 0 && y < boadsize;
-  //  x,yそれぞれが0すなわち石がおかれていない場合、falseをreturnする。
-  const isNotZero = (board: number[][], x: number, y: number): boolean =>
-    board[y][x] !== 0 ? false : true;
-  //  x,yの座標の盤面に石を置くことができるかをreturnする。
+  const isInBoard = (x: number, y: number): boolean => x >= 0 && x < boadsize && y >= 0 && y < boadsize;
+
+  const isNotZero = (board: number[][], x: number, y: number): boolean => board[y][x] === 0;
 
   const isValidMove = (x: number, y: number, board: number[][]) => {
-    isNotZero(board, x, y);
+    if (!isNotZero(board, x, y)) return false;
 
-    //石に対する8方向それぞれの座標軸(x,y)の方向を取得する。UI座標x -> board[]の行y、UI座標y -> board[]の列xに対応することに注意する。
     for (const [dx, dy] of directions) {
-      let distanceFromX: number = x + dx;
-      let distanceFromY: number = y + dy;
-      // 反対の色がみつかるかどうかをフラグで管理する。
-      let foundOpponent: boolean = false;
-      // distanceFromX,distanceFromYが盤面の中にありかつ相手の石の色がある場合は
-      // foundOpponentつまり相手の石の色があるフラグをtrueにして、x軸とy軸にそれぞれ１ずつ加えて
-      // 確認していく。
-      while (
-        isInBoard(distanceFromX, distanceFromY) &&
-        board[distanceFromY][distanceFromX] === OppoColor
-      ) {
+      let distanceFromX = x + dx, distanceFromY = y + dy;
+      let foundOpponent = false;
+      while (isInBoard(distanceFromX, distanceFromY) && board[distanceFromY][distanceFromX] === OppoColor) {
         foundOpponent = true;
         distanceFromX += dx;
         distanceFromY += dy;
       }
-      //相手の色のフラグがtrueであり（相手の色がまわりにある）かつ自分の色がある場合はtrueで返却する
-      if (
-        foundOpponent &&
-        isInBoard(distanceFromX, distanceFromY) &&
-        board[distanceFromY][distanceFromX] === turnColor
-      ) {
+      if (foundOpponent && isInBoard(distanceFromX, distanceFromY) && board[distanceFromY][distanceFromX] === turnColor) {
         return true;
       }
     }
-    //上記以外の場合は、石をおけないのでfor文から抜ける。
     return false;
   };
 
-  //オセロの石の色を反転させる場所を計算する関数を意味する。
   const flipAllDirections = (x: number, y: number, newBoard: number[][]) => {
-    // flipPositions[number,number][]に反転させる座標の情報を格納する。
     for (const [dx, dy] of directions) {
-      let distanceFromX = x + dx,
-        distanceFromY = y + dy;
+      let distanceFromX = x + dx, distanceFromY = y + dy;
       const flipPositions: [number, number][] = [];
-      //盤面の範囲内かつ相手の石の色がある場合は、flipPositions[]配列に上記の全方向の情報を格納する。
-      while (
-        isInBoard(distanceFromX, distanceFromY) &&
-        newBoard[distanceFromY][distanceFromX] === OppoColor
-      ) {
+      while (isInBoard(distanceFromX, distanceFromY) && newBoard[distanceFromY][distanceFromX] === OppoColor) {
         flipPositions.push([distanceFromX, distanceFromY]);
         distanceFromX += dx;
         distanceFromY += dy;
       }
-      //自分の石の色の場合は、flipPositionsを自分の石に変更する。
-      if (
-        isInBoard(distanceFromX, distanceFromY) &&
-        newBoard[distanceFromY][distanceFromX] === turnColor
-      ) {
+      if (isInBoard(distanceFromX, distanceFromY) && newBoard[distanceFromY][distanceFromX] === turnColor) {
         for (let i = 0; i < flipPositions.length; i++) {
-          const flipX = flipPositions[i][0];
-          const flipY = flipPositions[i][1];
+          const [flipX, flipY] = flipPositions[i];
           newBoard[flipY][flipX] = turnColor;
         }
       }
     }
   };
 
-  //石を反転できる盤面をチェックする関数
   const hasValidMove = (color: number, board: number[][]) => {
     for (let y = 0; y < boadsize; y++) {
       for (let x = 0; x < boadsize; x++) {
-        //動かせるx,y座標なのかを確認して、returnを返す。
         if (isValidMove(x, y, board)) return true;
       }
     }
     return false;
   };
 
-  //board現時点の白と黒の石の下図を計算することを意味する。
   const countStones = (board: number[][]) => {
-    let blackCount = 0;
-    let whiteCount = 0;
-
-    //盤面の各行を繰り返し処理
+    let blackCount = 0, whiteCount = 0;
     for (let i = 0; i < board.length; i++) {
-      const row = board[i];
-
-      for (let j = 0; j < row.length; j++) {
-        const cell = row[j];
-        if (cell === 1) {
-          blackCount++;
-        }
-        if (cell === 2) {
-          whiteCount++;
-        }
+      for (let j = 0; j < board[i].length; j++) {
+        if (board[i][j] === 1) blackCount++;
+        if (board[i][j] === 2) whiteCount++;
       }
     }
-
     return { blackCount, whiteCount };
   };
 
-  // ここでwinnerMessageが設定されている部分を再確認します。
-const checkWinner = (board: number[][]) => {
-  const { blackCount, whiteCount } = countStones(board);
-  const blackHasMove = hasValidMove(1, board);
-  const whiteHasMove = hasValidMove(2, board);
+  const checkWinner = (board: number[][]) => {
+    const { blackCount, whiteCount } = countStones(board);
+    const blackHasMove = hasValidMove(1, board);
+    const whiteHasMove = hasValidMove(2, board);
 
-  // 両プレイヤーが動けない場合に結果を表示
-  if (!blackHasMove && !whiteHasMove) {
-    let resultMessage = '';
-    if (blackCount > whiteCount) resultMessage = '黒の勝ちです。リセットボタンを押してください。';
-    if (whiteCount > blackCount) resultMessage = '白の勝ちです。リセットボタンを押してください。';
-    if (blackCount === whiteCount) resultMessage = '引き分けです。リセットボタンを押してください。';
+    if (!blackHasMove && !whiteHasMove) {
+      let resultMessage = '';
+      if (blackCount > whiteCount) resultMessage = '黒の勝ちです。リセットボタンを押してください。';
+      if (whiteCount > blackCount) resultMessage = '白の勝ちです。リセットボタンを押してください。';
+      if (blackCount === whiteCount) resultMessage = '引き分けです。リセットボタンを押してください。';
 
-    // ここでメッセージをセットします
-    setWinnerMessage(resultMessage);
-    console.log("Winner Message Set: ", resultMessage);  // メッセージが設定されているか確認
-    return resultMessage;
-  }
+      setWinnerMessage(resultMessage);
+      return resultMessage;
+    }
+    return null;
+  };
 
-  return null;
-};
-
-const isBoardFull = (board) => {
-  // 盤面が埋まったかどうかを確認する関数
-  return board.every(row => row.every(cell => cell !== 0)); // 盤面のすべてのセルが埋まっているか
-};
-
-const passTurn = () => {
-  if (winnerMessage) return;  // ゲームが終了している場合は何もしない
-
-  const nextTurn = 3 - turnColor;  // 次のターンの色
-  if (hasValidMove(nextTurn, board)) {  // 次のターンのプレイヤーが動けるか確認
-      setTurnColor(nextTurn);  // 次のターンに切り替え
-      setPassCount(0);  // パス回数をリセット
-  } else {
-      const newPassCount = passCount + 1;  // パス回数を増加
-      setPassCount(newPassCount);
-
-      if (newPassCount >= 2 || isBoardFull(board)) {  // 両プレイヤーがパスした場合または盤面が埋まった場合、ゲーム終了
-          const result = checkWinner(board);  // 勝者の確認
-          if (result) {
-              setWinnerMessage(result);  // 勝者メッセージを表示
-          }
-      } else {
-          if (passCount === 1) {
-              setWinnerMessage('両プレイヤーとも動けないので、次のターンへ');
-          }
-          setTurnColor(nextTurn);  // 次のターンに切り替え
+  const isBoardFull = (board: number[][]) => {
+    for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board[i].length; j++) {
+        if (board[i][j] === 0) return false;
       }
-  }
-};
+    }
+    return true;
+  };
+  
 
-
-
+  const passTurn = () => {
+    if (winnerMessage) return;  // ゲームがすでに終了している場合は何もしない
+  
+    const nextTurn = 3 - turnColor;  // 相手のターン
+  
+    // 相手が動ける場合、ターンを交代
+    if (hasValidMove(nextTurn, board)) {
+      setTurnColor(nextTurn);
+      setPassCount(0);  // パスカウントをリセット
+    } else {
+      // 相手が動けない場合、パスカウントを増加
+      const newPassCount = passCount + 1;
+      setPassCount(newPassCount);
+  
+      // パスが2回連続で続いた場合、またはボードが埋まった場合に勝者をチェック
+      if (newPassCount >= 2 || isBoardFull(board)) {
+        const result = checkWinner(board);  // 勝者を判定
+        if (result) setWinnerMessage(result);  // 勝者メッセージを設定
+      } else {
+        // パスが1回だけなら次のターンへ
+        setTurnColor(nextTurn);
+      }
+    }
+  };
+  
+  
 
   const onClick = (x: number, y: number) => {
-    if(board[y][x] !== 0) return;
+    if (board[y][x] !== 0) return;
     if (!isValidMove(x, y, board)) return;
-  
+
     const newBoard = structuredClone(board);
     newBoard[y][x] = turnColor;
     flipAllDirections(x, y, newBoard);
     setBoard(newBoard);
-  
+
     const nextTurn = 3 - turnColor;
     if (hasValidMove(nextTurn, newBoard)) {
       setTurnColor(nextTurn);
       setPassCount(0);
     } else {
-      passTurn(); // 自動的にパス処理
+      passTurn();
     }
-  
-    const result = checkWinner(newBoard); 
-    if (result) setWinnerMessage(result); // 勝者が決まった場合にメッセージを設定
+
+    const result = checkWinner(newBoard);
+    if (result) setWinnerMessage(result);
   };
-  
 
   const resetBoard = () => {
     setBoard(InitialBoard);
