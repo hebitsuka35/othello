@@ -9,12 +9,7 @@
 }
 
 .resetButton {
-  background-color: white;
-  border: 1px solid gray;
-  border-radius: 10%;
-}
-
-.passButton {
+  cursor: pointer;
   background-color: white;
   border: 1px solid gray;
   border-radius: 10%;
@@ -25,8 +20,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  min-height: 100vh;
   padding: 0 0.5rem;
 }
 
@@ -44,6 +37,7 @@
   justify-content: center;
   width: 80px;
   height: 80px;
+  cursor: pointer;
   border: 2px solid black;
 }
 
@@ -51,12 +45,5 @@
   width: 56px;
   height: 56px;
   background-color: white;
-  border-radius: 50%;
-}
-
-.hint {
-  width: 56px;
-  height: 56px;
-  background-color: #ffd5b2;
   border-radius: 50%;
 }
