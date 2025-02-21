@@ -58,35 +58,37 @@ export default function Home() {
 
   // 石を置いたときに、8方向に反対の石の色があるかを判定する関数
 const hasArroundOppColor = (x: number, y: number, currentColor: number): boolean => {
-  const hasOppositeColor = currentColor === 1 ? 2 : 1;
+  const oppositeColor = currentColor === 1 ? 2 : 1;
   for (const [dx, dy] of directions) {
-    let nx = x + dx;
-    let ny = y + dy;
-    if (isInBoard(nx, ny) && board[ny][nx] === hasOppositeColor) {
+    let distanceFromX = x + dx;
+    let distanceFromY = y + dy;
+    if (isInBoard(distanceFromX, distanceFromY) && board[distanceFromY][distanceFromX] === oppositeColor) {
       return true;
     }
   }
   return false;
 };
 
-  //盤面上(x,y)に自分のオセロの石を置いたときに、
-  //8方向に反対の色の石があるかを判定し、その石を反転させる。
+  //盤面上(x,y)に自分のオセロの石を置いたときに、8方向の石を反転させる。
   const flipStones = (x:number,y:number,currentColor:number,board:number[][]):number[][] =>{
     const newBoard = structuredClone(board);
-    const arroundOppColor = currentColor === 1 ? 2 : 1;
+    const oppositeColor = currentColor === 1 ? 2 : 1;
 
     for(const [dx,dy] of directions){
-      let nx = x + dx;  
-      let ny = y + dy;
-      let stonesToFlip = [];
+      let distanceFromX = x + dx;  
+      let distanceFromY = y + dy;
+      //反転する盤面を意味する。
+      let stonesToFlip:number[][] = [];
       
-      while(isInBoard(nx,ny) && newBoard[ny][nx] === arroundOppColor){
-        stonesToFlip.push([nx,ny]);
-        nx += dx;
-        ny += dy;
+      //8方向に対して相手の色が続いているループの場合は、stonesToFlipに格納する。
+      while(isInBoard(distanceFromX,distanceFromY) && newBoard[distanceFromY][distanceFromX] === oppositeColor){
+        stonesToFlip.push([distanceFromX,distanceFromY]);
+        distanceFromX += dx;
+        distanceFromY += dy;
       }
       
-      if(isInBoard(nx,ny) && board[ny][nx] === currentColor){
+      //自分の石の色に挟まれた場合は、自分の石の色をstonesToFlipに格納して、newBoardを自分の石の色に変更する。
+      if(isInBoard(distanceFromX,distanceFromY) && board[distanceFromY][distanceFromX] === currentColor){
         for(const [fx,fy] of stonesToFlip){
           newBoard[fy][fx] = currentColor;
         }
