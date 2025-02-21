@@ -33,6 +33,40 @@ export default function Home() {
   const isInBoard = (x: number, y: number): boolean => x >= 0 && x < board.length && y >= 0 && y < board.length;
   //盤面が黒(1)でもなく白(2)でもなく、0であるかを判定することを意味する。
   const isZero = (x: number, y: number,board:number[][]): boolean => board[y][x] === 0;
+  //石を置いたときに、8方向に反対の石の色があるかを判定する関数
+  const hasArroundOppColor = (x: number, y: number, turnColor: number): boolean => {
+      for (const [dx, dy] of directions) {
+        let checkX:number = x + dx;
+        let checkY:number = y + dy;
+        if (isInBoard(checkX, checkY) && board[checkY][checkX] === OppoColor) {
+          return true;
+        }
+      }
+      return false;
+  };
+  // 石を置くことができるか確認する関数。
+  const canSetTurnColor = (x: number, y: number, turnColor: number, board: number[][]): boolean => {
+    if (hasArroundOppColor(x, y, turnColor)) {
+      const OppoColor = turnColor === 1 ? 2 : 1;
+      
+      for (const [dx, dy] of directions) {
+        let distanceFromX = x + dx;
+        let distanceFromY = y + dy;
+        let hasOpponentBetween = false;
+
+        while (isInBoard(distanceFromX, distanceFromY) && board[distanceFromY][distanceFromX] === OppoColor) {
+          hasOpponentBetween = true;
+          distanceFromX += dx;
+          distanceFromY += dy;
+        }
+        
+        if (hasOpponentBetween &&isInBoard(distanceFromX, distanceFromY) && board[distanceFromY][distanceFromX] === turnColor) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
    
   //// ------関数宣言------
   //// ------実行系------
@@ -49,59 +83,41 @@ export default function Home() {
    );
    return {blackCount,whiteCount};
   };
-
   //初期盤面の状態にして、1:黒のオセロの色の石からスタートすることを意味する。
   const resetBoard = ():void=> { 
     setBoard(InitialBoard);
     setTurnColor(1);
   };
-
-  // 石を置いたときに、8方向に反対の石の色があるかを判定する関数
-const hasArroundOppColor = (x: number, y: number, currentColor: number): boolean => {
-  const oppositeColor = currentColor === 1 ? 2 : 1;
-  for (const [dx, dy] of directions) {
-    let distanceFromX = x + dx;
-    let distanceFromY = y + dy;
-    if (isInBoard(distanceFromX, distanceFromY) && board[distanceFromY][distanceFromX] === oppositeColor) {
-      return true;
-    }
-  }
-  return false;
-};
-
   //盤面上(x,y)に自分のオセロの石を置いたときに、8方向の石を反転させる。
-  const flipStones = (x:number,y:number,currentColor:number,board:number[][]):number[][] =>{
+  const flipStones = (x:number,y:number,turnColor:number,board:number[][]):number[][] =>{
     const newBoard = structuredClone(board);
-    const oppositeColor = currentColor === 1 ? 2 : 1;
-
     for(const [dx,dy] of directions){
       let distanceFromX = x + dx;  
       let distanceFromY = y + dy;
       //反転する盤面を意味する。
       let stonesToFlip:number[][] = [];
-      
       //8方向に対して相手の色が続いているループの場合は、stonesToFlipに格納する。
-      while(isInBoard(distanceFromX,distanceFromY) && newBoard[distanceFromY][distanceFromX] === oppositeColor){
+      while(isInBoard(distanceFromX,distanceFromY) && newBoard[distanceFromY][distanceFromX] === OppoColor){
         stonesToFlip.push([distanceFromX,distanceFromY]);
         distanceFromX += dx;
         distanceFromY += dy;
       }
-      
       //自分の石の色に挟まれた場合は、自分の石の色をstonesToFlipに格納して、newBoardを自分の石の色に変更する。
-      if(isInBoard(distanceFromX,distanceFromY) && board[distanceFromY][distanceFromX] === currentColor){
+      if(isInBoard(distanceFromX,distanceFromY) && board[distanceFromY][distanceFromX] === turnColor){
         for(const [fx,fy] of stonesToFlip){
-          newBoard[fy][fx] = currentColor;
+          newBoard[fy][fx] = turnColor;
         }
       }
     }
     return newBoard;
   };
-  
+
+
   // onClickのクリックイイベントで取得したx,y座標に対して
   // オセロの石を配置する関数を意味する。
   const placeTurnColor = (x: number, y: number) => {
     const newBoard = structuredClone(board);
-    if(isInBoard(x,y) &&isZero(x,y,board) && hasArroundOppColor(x,y,turnColor)){
+    if(isInBoard(x,y) &&isZero(x,y,board) && hasArroundOppColor(x,y,turnColor) && canSetTurnColor(x,y,turnColor,board) ){
       newBoard[y][x] = turnColor;
       const flippedBoard = flipStones(x,y,turnColor,newBoard);
       setTurnColor(OppoColor);
