@@ -51,46 +51,65 @@ export default function Home() {
   };
 
   //初期盤面の状態にして、1:黒のオセロの色の石からスタートすることを意味する。
-  const resetBoard = ()=> { 
+  const resetBoard = ():void=> { 
     setBoard(InitialBoard);
     setTurnColor(1);
   };
 
-  //オセロの石を置いたときに、置いた盤面の8方向に反対の石の色があり、かつ反対の石の色の先に自分の石の色がある場合に反転する、
-  // 反対の石の色の先の何個先に自分の石の色があるのかはわからない前提であることを意味する。
-  
-  //置いた石の盤面の8方向の座標を意味する。
-  
-  // let distanceFromX0 = directions[0][0];
-  // let distanceFromX1 = directions[1][0];
-  // let distanceFromX2 = directions[2][0];
-  // console.log(distanceFromX0,distanceFromX1,distanceFromX2);
-  //directionsのy座標がとれた
-  const distanceFromX:number[] = [];
-  for(let i = 0;i<directions.length;i++){
-    distanceFromX.push(directions[i][0]);
-    
-    console.log((directions[i][0]));
-    console.log(distanceFromX);
+  // 石を置いたときに、8方向に反対の石の色があるかを判定する関数
+const hasArroundOppColor = (x: number, y: number, currentColor: number): boolean => {
+  const hasOppositeColor = currentColor === 1 ? 2 : 1;
+  for (const [dx, dy] of directions) {
+    let nx = x + dx;
+    let ny = y + dy;
+    if (isInBoard(nx, ny) && board[ny][nx] === hasOppositeColor) {
+      return true;
+    }
+  }
+  return false;
+};
+
+  //盤面上(x,y)に自分のオセロの石を置いたときに、
+  //8方向に反対の色の石があるかを判定し、その石を反転させる。
+  const flipStones = (x:number,y:number,currentColor:number,board:number[][]):number[][] =>{
+    const newBoard = structuredClone(board);
+    const arroundOppColor = currentColor === 1 ? 2 : 1;
+
+    for(const [dx,dy] of directions){
+      let nx = x + dx;  
+      let ny = y + dy;
+      let stonesToFlip = [];
+      
+      while(isInBoard(nx,ny) && newBoard[ny][nx] === arroundOppColor){
+        stonesToFlip.push([nx,ny]);
+        nx += dx;
+        ny += dy;
+      }
+      
+      if(isInBoard(nx,ny) && board[ny][nx] === currentColor){
+        for(const [fx,fy] of stonesToFlip){
+          newBoard[fy][fx] = currentColor;
+        }
+      }
+    }
+    return newBoard;
   };
   
-
-  
-  // onClickのx,y座標に対してオセロの石を配置する関数を意味する。
+  // onClickのクリックイイベントで取得したx,y座標に対して
+  // オセロの石を配置する関数を意味する。
   const placeTurnColor = (x: number, y: number) => {
     const newBoard = structuredClone(board);
-    if(isZero(x,y,board)){
+    if(isInBoard(x,y) &&isZero(x,y,board) && hasArroundOppColor(x,y,turnColor)){
       newBoard[y][x] = turnColor;
+      const flippedBoard = flipStones(x,y,turnColor,newBoard);
       setTurnColor(OppoColor);
-      setBoard(newBoard);
+      setBoard(flippedBoard);
     }
   };
 
   return (
     <>
-      <div className={styles.header}>
-        <div className={styles.title}>オセロ</div>
-      </div>
+      <div className={styles.title}>オセロ</div>
       <div>現在のターン：{turnColor === 1 ? '黒⚫️' : '白⚪️'}</div>
       <div>------------------------------------------------</div>
       <div>

@@ -1,11 +1,8 @@
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .title {
+  width: 100px;
+  height: 30px;
   text-align: center;
+  background-color:gainsboro;
 }
 
 .resetButton {
