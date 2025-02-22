@@ -177,11 +177,8 @@ export default function Home() {
                     style={{ background: color === 1 ? '#000' : '#fff' }}
                   />
                 )}
-                {canSetTurnColor(x,y,turnColor,board) && color === 0 &&(
-                  <div
-                    className = {styles.stone}
-                    style = {{background:'#ff7f32'}}
-                    />
+                {canSetTurnColor(x, y, turnColor, board) && color === 0 && (
+                  <div className={styles.stone} style={{ background: '#ff7f32' }} />
                 )}
               </div>
             )),
