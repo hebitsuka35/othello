@@ -153,7 +153,6 @@ export default function Home() {
   useEffect(() => {
     setCanPlaceBoard(displayCanPlaceTurnColor(turnColor, board));
   }, [turnColor, board]);
-  
 
   // onClickのクリックイイベントで取得したx,y座標に対して
   // オセロの石を配置する関数を意味する。
