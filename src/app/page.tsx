@@ -176,7 +176,7 @@ export default function Home() {
       <div className={styles.title}>オセロ</div>
       <div>現在のターン：{turnColor === 1 ? '黒⚫️' : '白⚪️'}</div>
       <div>------------------------------------------------</div>
-      <div>配置可能な場所：オレンジ色🟠</div>
+      <div>配置可能な場所:オレンジ色🟠</div>
       <div>------------------------------------------------</div>
       <div>黒⚫️の数：{countStones(board).blackCount}</div>
       <div>白⚪️の数：{countStones(board).whiteCount}</div>
