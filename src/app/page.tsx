@@ -42,7 +42,7 @@ export default function Home() {
   const isInBoard = (x: number, y: number): boolean =>
     x >= 0 && x < board.length && y >= 0 && y < board.length;
   //盤面が黒(1)でもなく白(2)でもなく、0であるかを判定することを意味する。
-  const isZero = (x: number, y: number, board: number[][]): boolean => board[y][x] === 0;
+  const isZero = (_x: number, _y: number, board: number[][]): boolean => board[_y][_x] === 0;
   //石を置いたときに、8方向に反対の石の色があるかを判定する関数
   const hasArroundOppColor = (x: number, y: number, turnColor: number): boolean => {
     for (const [dx, dy] of directions) {
@@ -159,7 +159,7 @@ export default function Home() {
   //boardとturnColorが変更されるたびに(依存配列)、配置可能な場所を更新する。
   useEffect(() => {
     updateDisplayBoard();
-  }, [board, turnColor]);
+  }, [board, turnColor,updateDisplayBoard]);
 
   // onClickのクリックイイベントで取得したx,y座標に対して
   // オセロの石を配置する関数を意味する。
@@ -190,7 +190,7 @@ export default function Home() {
       <div>------------------------------------------------</div>
       <div>
         <button className={styles.resetButton} onClick={resetBoard}>
-          リセット　
+          リセット
         </button>
       </div>
       <div>------------------------------------------------</div>
