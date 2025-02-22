@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styles from './page.module.css';
 
 export default function Home() {
@@ -33,8 +33,6 @@ export default function Home() {
     [0, -1],
     [1, -1],
   ];
-  //自分の色を配置できるか盤面を状態管理する。
-  const [canPlaceBoard, setCanPlaceBoard] = useState<number[][]>(InitialBoard);
 
   //// ------関数宣言------
   //// ------判定系------
@@ -42,7 +40,7 @@ export default function Home() {
   const isInBoard = (x: number, y: number): boolean =>
     x >= 0 && x < board.length && y >= 0 && y < board.length;
   //盤面が黒(1)でもなく白(2)でもなく、0であるかを判定することを意味する。
-  const isZero = (_x: number, _y: number, board: number[][]): boolean => board[_y][_x] === 0;
+  const isZero = (x: number, y: number, board: number[][]): boolean => board[y][x] === 0;
   //石を置いたときに、8方向に反対の石の色があるかを判定する関数
   const hasArroundOppColor = (x: number, y: number, turnColor: number): boolean => {
     for (const [dx, dy] of directions) {
@@ -137,23 +135,6 @@ export default function Home() {
     return newBoard;
   };
 
-  //自分の色の石を置ける場所を表示する。
-  const displayCanPlaceTurnColor = (turnColor: number, board: number[][]): number[][] => {
-    const newBoard = structuredClone(board);
-    for (let y = 0; y < board.length; y++) {
-      for (let x = 0; x < board[y].length; x++) {
-        if (canSetTurnColor(x, y, turnColor, board) && board[y][x] === 0) {
-          newBoard[y][x] = 3;
-        }
-      }
-    }
-    return newBoard;
-  };
-
-  useEffect(() => {
-    setCanPlaceBoard(displayCanPlaceTurnColor(turnColor, board));
-  }, [turnColor, board]);
-
   // onClickのクリックイイベントで取得したx,y座標に対して
   // オセロの石を配置する関数を意味する。
   const placeTurnColor = (x: number, y: number) => {
@@ -176,15 +157,8 @@ export default function Home() {
       <div className={styles.title}>オセロ</div>
       <div>現在のターン：{turnColor === 1 ? '黒⚫️' : '白⚪️'}</div>
       <div>------------------------------------------------</div>
-<<<<<<< HEAD
-      <div>配置可能な場所:オレンジ色🟠</div>
-      <div>------------------------------------------------</div>
-      <div>黒⚫️の数：{countStones(board).blackCount}</div>
-      <div>白⚪️の数：{countStones(board).whiteCount}</div>
-=======
       <div>黒色⚫️の数：{countStones(board).blackCount}</div>
       <div>白色⚪️の数：{countStones(board).whiteCount}</div>
->>>>>>> 3a8b8b3 (tst)
       <div>------------------------------------------------</div>
       <div>
         <button className={styles.resetButton} onClick={resetBoard}>
@@ -196,13 +170,8 @@ export default function Home() {
         <div className={styles.board}>
           {board.map((row, y) =>
             row.map((color, x) => (
-              <div
-                className={styles.cell}
-                key={`${x}-${y}`}
-                onClick={() => placeTurnColor(x, y)}
-                style={{ backgroundColor: canPlaceBoard[y][x] === 3 ? 'orange' : '' }}
-              >
-                {color !== 0 && color !== 3 && (
+              <div className={styles.cell} key={`${x}-${y}`} onClick={() => placeTurnColor(x, y)}>
+                {color !== 0 && (
                   <div
                     className={styles.stone}
                     style={{ background: color === 1 ? '#000' : '#fff' }}
