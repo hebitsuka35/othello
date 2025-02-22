@@ -159,7 +159,7 @@ export default function Home() {
   //boardとturnColorが変更されるたびに(依存配列)、配置可能な場所を更新する。
   useEffect(() => {
     updateDisplayBoard();
-  }, [board, turnColor, updateDisplayBoard]);
+  }, [board, turnColor]);
 
   // onClickのクリックイイベントで取得したx,y座標に対して
   // オセロの石を配置する関数を意味する。
