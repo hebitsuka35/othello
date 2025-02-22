@@ -190,7 +190,7 @@ export default function Home() {
       <div>------------------------------------------------</div>
       <div>
         <button className={styles.resetButton} onClick={resetBoard}>
-          リセット
+          リセット　
         </button>
       </div>
       <div>------------------------------------------------</div>
