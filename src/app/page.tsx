@@ -82,6 +82,28 @@ export default function Home() {
     }
     return false;
   };
+  //盤面上に候補地があるかどうかを判定する。
+  const checkCanSetTurnColor = (turnColor: number, board: number[][]): boolean => {
+    for (let y = 0; y < board.length; y++) {
+      for (let x = 0; x < board[y].length; x++) {
+        if (canSetTurnColor(x, y, turnColor, board)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+  //盤面上に1,2のいずれかが置かれて、オセロゲームが終了するかどうかを判定する。
+  const isOrNotGameOver = (board: number[][]): boolean => {
+    for (let y = 0; y < board.length; y++) {
+      for (let x = 0; x < board[y].length; x++) {
+        if (board[y][x] === 0) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
 
   //// ------関数宣言------
   //// ------実行系------
@@ -151,6 +173,28 @@ export default function Home() {
       setBoard(flippedBoard);
     }
   };
+  //パスをする関数を意味する。
+  const passTurn = () => {
+    setTurnColor(OppoColor);
+    setBoard(board);
+  };
+
+  // //全ての盤面に石が載った場合は、ゲーム終了のメッセージを表示する。
+  // const DisplayGameOver = () => (isOrNotGameOver(board) ? `ゲーム終了です。` : ``);
+
+  const dispayGameResult = (board: number[][]): string => {
+    if (isOrNotGameOver(board)) {
+      const { blackCount, whiteCount } = countStones(board);
+      if (blackCount > whiteCount) {
+        return 'ゲーム終了です。黒の勝ちです。';
+      } else if (blackCount < whiteCount) {
+        return 'ゲーム終了です。白の勝ちです。';
+      } else {
+        return 'ゲーム終了です。引き分けです。';
+      }
+    }
+    return 'ゲーム中です。';
+  };
 
   return (
     <>
@@ -161,10 +205,18 @@ export default function Home() {
       <div>白色⚪️の数：{countStones(board).whiteCount}</div>
       <div>------------------------------------------------</div>
       <div>
+        <button className={styles.resetButton} onClick={passTurn}>
+          パス
+        </button>
+      </div>
+      <div>------------------------------------------------</div>
+      <div>
         <button className={styles.resetButton} onClick={resetBoard}>
           リセット
         </button>
       </div>
+      <div>------------------------------------------------</div>
+      <div>{dispayGameResult(board)}</div>
       <div>------------------------------------------------</div>
       <div className={styles.container}>
         <div className={styles.board}>
