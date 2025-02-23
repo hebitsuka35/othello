@@ -2,11 +2,10 @@
 
 import { useState } from 'react';
 import styles from './page.module.css';
-
 export default function Home() {
   //// ------変数/状態管理宣言------
   //turnColorは現在のターンで配置する石の色を意味する。1は黒、2は白を意味する。
-  const [turnColor, setTurnColor] = useState(1);
+  const [turnColor, setTurnColor] = useState<number>(1);
   //現在のターンの反対の石の色を意味する。2/1(黒)は、2(白)、2/1(黒)は2(白)を意味する。
   const OppoColor: number = 2 / turnColor;
   //盤面の初期状態を意味する。1は黒、0は白を意味する。
@@ -15,13 +14,13 @@ export default function Home() {
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 1, 2, 0, 0, 0],
-    [0, 0, 0, 1, 1, 0, 0, 0],
+    [0, 0, 0, 2, 1, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
   ];
   //現在の盤面を意味する。
-  const [board, setBoard] = useState(InitialBoard);
+  const [board, setBoard] = useState<number[][]>(InitialBoard);
   //onClickで取得したx,y座標からの8方向の座標の位置を意味する。
   const directions: number[][] = [
     [1, 0],
@@ -33,8 +32,8 @@ export default function Home() {
     [0, -1],
     [1, -1],
   ];
-  //連続でパスの回数を記録する。
-  const [continuePassCount, setContinuePassCount] = useState(0);
+  //連続でパスした回数を記録する。
+  const [continuePassCount, setContinuePassCount] = useState<number>(0);
 
   //// ------関数宣言------
   //// ------判定系------
@@ -44,7 +43,7 @@ export default function Home() {
   //盤面が黒(1)でもなく白(2)でもなく、0であるかを判定することを意味する。
   const isZero = (x: number, y: number, board: number[][]): boolean => board[y][x] === 0;
   //石を置いたときに、8方向に反対の石の色があるかを判定する関数
-  const hasArroundOppColor = (x: number, y: number, turnColor: number): boolean => {
+  const hasArroundOppColor = (x: number, y: number): boolean => {
     for (const [dx, dy] of directions) {
       const checkX: number = x + dx;
       const checkY: number = y + dy;
@@ -56,7 +55,7 @@ export default function Home() {
   };
   // 石を置くことができるか確認する関数。
   const canSetTurnColor = (x: number, y: number, turnColor: number, board: number[][]): boolean => {
-    if (hasArroundOppColor(x, y, turnColor)) {
+    if (hasArroundOppColor(x, y)) {
       const OppoColor = turnColor === 1 ? 2 : 1;
 
       for (const [dx, dy] of directions) {
@@ -110,7 +109,7 @@ export default function Home() {
   //// ------関数宣言------
   //// ------実行系------
   //盤面のオセロの色の数量を計算することを意味する。
-  const countStones = (board: number[][]) => {
+  const countStones = (board: number[][]): { blackCount: number; whiteCount: number } => {
     let blackCount: number = 0,
       whiteCount: number = 0;
     board.map((row, y) =>
@@ -162,12 +161,12 @@ export default function Home() {
 
   // onClickのクリックイイベントで取得したx,y座標に対して
   // オセロの石を配置する関数を意味する。
-  const placeTurnColor = (x: number, y: number) => {
+  const placeTurnColor = (x: number, y: number): void => {
     const newBoard = structuredClone(board);
     if (
       isInBoard(x, y) &&
       isZero(x, y, board) &&
-      hasArroundOppColor(x, y, turnColor) &&
+      hasArroundOppColor(x, y) &&
       canSetTurnColor(x, y, turnColor, board) &&
       continuePassCount <= 1
     ) {
@@ -178,8 +177,9 @@ export default function Home() {
       setContinuePassCount(0);
     }
   };
+
   //パスをする関数を意味する。
-  const passTurn = () => {
+  const passTurn = (): void => {
     if (checkCanSetTurnColor(turnColor, board)) {
       alert('候補地があるのでパスできません。');
       return;
