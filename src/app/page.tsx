@@ -247,18 +247,16 @@ export default function Home() {
           )}
         </div>
       </div>
-      <div className={styles.footer}>
+      <div className={styles.passMessage}>
         <div>
           候補地がない場合、パスを押してください。2連続パスの場合ゲーム終了です。連続パス回数:{' '}
           {continuePassCount}
         </div>
       </div>
-      <div>
+      <div className={styles.footer}>
         <button className={styles.button} onClick={passTurn}>
           パス
         </button>
-      </div>
-      <div>
         <button className={styles.button} onClick={resetBoard}>
           リセット
         </button>
