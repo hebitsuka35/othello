@@ -36,3 +36,16 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 git . add
 git commit -m 'コメント'
 git push origin main
+
+test
+
+[
+[1, 1, 1, 1, 1, 1, 1, 1],
+[1, 1, 1, 1, 1, 1, 1, 1],
+[1, 1, 1, 1, 1, 1, 1, 1],
+[1, 1, 1, 1, 2, 1, 1, 1],
+[1, 1, 1, 2, 1, 1, 1, 1],
+[1, 1, 1, 1, 1, 1, 1, 1],
+[1, 1, 1, 1, 1, 1, 1, 1],
+[1, 1, 1, 1, 1, 1, 1, 1],
+];

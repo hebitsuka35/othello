@@ -19,6 +19,7 @@ export default function Home() {
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
   ];
+
   //現在の盤面を意味する。
   const [board, setBoard] = useState<number[][]>(InitialBoard);
   //onClickで取得したx,y座標からの8方向の座標の位置を意味する。
@@ -200,18 +201,21 @@ export default function Home() {
 
   // //全ての盤面に石が載った場合は、ゲーム終了のメッセージを表示する。
   // const DisplayGameOver = () => (isOrNotGameOver(board) ? `ゲーム終了です。` : ``);
-  const dispayGameResult = (board: number[][]): string => {
+  const dispayGameResult = (board: number[][]) => {
     if (continuePassCount >= 2 || isOrNotGameOver(board)) {
       const { blackCount, whiteCount } = countStones(board);
       if (blackCount > whiteCount) {
         return 'ゲーム終了です。黒の勝ちです。リセットを押してください。';
+        alert('test');
       } else if (blackCount < whiteCount) {
         return 'ゲーム終了です。白の勝ちです。リセットを押してください。';
+        alert('test');
       } else {
         return 'ゲーム終了です。引き分けです。リセットを押してください。';
+        alert('test');
       }
     }
-    return 'ゲーム中です。';
+    return '';
   };
 
   return (
@@ -219,9 +223,7 @@ export default function Home() {
       <div className={styles.title}>オセロ</div>
       <div>
         <span className={styles.span}>現在のターン：{turnColor === 1 ? '黒色⚫️' : '白色⚪️'} </span>
-        候補地：オレンジ色🟠
-      </div>
-      <div>
+        <span className={styles.span}>候補地：オレンジ色🟠</span>
         <span className={styles.span}>黒色⚫️の数：{countStones(board).blackCount}</span>
         <span className={styles.span}>白色⚪️の数：{countStones(board).whiteCount}</span>
         <span>{dispayGameResult(board)}</span>
@@ -244,20 +246,22 @@ export default function Home() {
             )),
           )}
         </div>
+      </div>
+      <div className={styles.footer}>
         <div>
           候補地がない場合、パスを押してください。2連続パスの場合ゲーム終了です。連続パス回数:{' '}
           {continuePassCount}
         </div>
-        <div>
-          <button className={styles.button} onClick={passTurn}>
-            パス
-          </button>
-        </div>
-        <div>
-          <button className={styles.button} onClick={resetBoard}>
-            リセット
-          </button>
-        </div>
+      </div>
+      <div>
+        <button className={styles.button} onClick={passTurn}>
+          パス
+        </button>
+      </div>
+      <div>
+        <button className={styles.button} onClick={resetBoard}>
+          リセット
+        </button>
       </div>
     </>
   );
