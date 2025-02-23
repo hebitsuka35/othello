@@ -83,6 +83,7 @@ export default function Home() {
     }
     return false;
   };
+
   //盤面上に候補地があるかどうかを判定する。
   const checkCanSetTurnColor = (turnColor: number, board: number[][]): boolean => {
     for (let y = 0; y < board.length; y++) {
@@ -128,6 +129,7 @@ export default function Home() {
     setBoard(InitialBoard);
     setTurnColor(1);
     setContinuePassCount(0);
+    alert('リセットします。');
   };
   //盤面上(x,y)に自分のオセロの石を置いたときに、8方向の石を反転させる。
   const flipStones = (x: number, y: number, turnColor: number, board: number[][]): number[][] => {
@@ -189,6 +191,7 @@ export default function Home() {
     setContinuePassCount(newContinuePassCount);
     setTurnColor(OppoColor);
     setBoard(board);
+    alert('パスしました。');
 
     if (newContinuePassCount >= 2) {
       alert('2連続でパスするとゲーム終了となります。');
@@ -214,30 +217,15 @@ export default function Home() {
   return (
     <>
       <div className={styles.title}>オセロ</div>
-      <div>------------------------------------------------</div>
-      <div>現在のターン：{turnColor === 1 ? '黒色⚫️' : '白色⚪️'}</div>
-      <div>候補地：オレンジ色🟠</div>
-      <div>※候補地がない場合は、パスを押してください。</div>
-      <div>------------------------------------------------</div>
-      <div>黒色⚫️の数：{countStones(board).blackCount}</div>
-      <div>白色⚪️の数：{countStones(board).whiteCount}</div>
-      <div>------------------------------------------------</div>
       <div>
-        <button className={styles.resetButton} onClick={passTurn}>
-          パス
-        </button>
+        <span className={styles.span}>現在のターン：{turnColor === 1 ? '黒色⚫️' : '白色⚪️'} </span>
+        候補地：オレンジ色🟠
       </div>
-      <div>連続パス回数: {continuePassCount}</div>
-      <div>※2連続でパスするとゲーム終了となります。</div>
-      <div>------------------------------------------------</div>
       <div>
-        <button className={styles.resetButton} onClick={resetBoard}>
-          リセット
-        </button>
+        <span className={styles.span}>黒色⚫️の数：{countStones(board).blackCount}</span>
+        <span className={styles.span}>白色⚪️の数：{countStones(board).whiteCount}</span>
+        <span>{dispayGameResult(board)}</span>
       </div>
-      <div>------------------------------------------------</div>
-      <div>{dispayGameResult(board)}</div>
-      <div>------------------------------------------------</div>
       <div className={styles.container}>
         <div className={styles.board}>
           {board.map((row, y) =>
@@ -255,6 +243,20 @@ export default function Home() {
               </div>
             )),
           )}
+        </div>
+        <div>
+          候補地がない場合、パスを押してください。2連続パスの場合ゲーム終了です。連続パス回数:{' '}
+          {continuePassCount}
+        </div>
+        <div>
+          <button className={styles.button} onClick={passTurn}>
+            パス
+          </button>
+        </div>
+        <div>
+          <button className={styles.button} onClick={resetBoard}>
+            リセット
+          </button>
         </div>
       </div>
     </>

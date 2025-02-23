@@ -1,15 +1,13 @@
 .title {
-  width: 100px;
+  width: 100vw;
   height: 30px;
   text-align: center;
-  background-color:gainsboro;
+  background-color: gainsboro;
 }
 
-.resetButton {
-  cursor: pointer;
-  background-color: white;
-  border: 1px solid gray;
-  border-radius: 10%;
+.span {
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
 .container {
@@ -48,4 +46,13 @@
 .candidate {
   cursor: pointer;
   background-color: #ff7f32;
+}
+
+.button {
+  width: 100px;
+  height: 50px;
+  cursor: pointer;
+  background-color: gainsboro;
+  border: 1px solid gray;
+  border-radius: 10%;
 }
