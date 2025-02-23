@@ -6,8 +6,15 @@
   background-color: gainsboro;
 }
 
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
 .span {
-  margin: 20px 40px;
+  margin: 0 30px;
 }
 
 .container {

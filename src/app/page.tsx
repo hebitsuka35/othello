@@ -221,7 +221,7 @@ export default function Home() {
   return (
     <>
       <div className={styles.title}>オセロ</div>
-      <div>
+      <div className={styles.header}>
         <span className={styles.span}>現在のターン：{turnColor === 1 ? '黒色⚫️' : '白色⚪️'} </span>
         <span className={styles.span}>候補地：オレンジ色🟠</span>
         <span className={styles.span}>黒色⚫️の数：{countStones(board).blackCount}</span>
