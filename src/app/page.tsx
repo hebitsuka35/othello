@@ -15,7 +15,7 @@ export default function Home() {
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 1, 2, 0, 0, 0],
-    [0, 0, 0, 2, 1, 0, 0, 0],
+    [0, 0, 0, 1, 1, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -180,6 +180,10 @@ export default function Home() {
   };
   //パスをする関数を意味する。
   const passTurn = () => {
+    if (checkCanSetTurnColor(turnColor, board)) {
+      alert('候補地があるのでパスできません。');
+      return;
+    }
     if (continuePassCount >= 2) return;
     const newContinuePassCount = continuePassCount + 1;
     setContinuePassCount(newContinuePassCount);
@@ -210,7 +214,10 @@ export default function Home() {
   return (
     <>
       <div className={styles.title}>オセロ</div>
-      <div>現在のターン：{turnColor === 1 ? '黒⚫️' : '白⚪️'}</div>
+      <div>------------------------------------------------</div>
+      <div>現在のターン：{turnColor === 1 ? '黒色⚫️' : '白色⚪️'}</div>
+      <div>候補地：オレンジ色🟠</div>
+      <div>※候補地がない場合は、パスを押してください。</div>
       <div>------------------------------------------------</div>
       <div>黒色⚫️の数：{countStones(board).blackCount}</div>
       <div>白色⚪️の数：{countStones(board).whiteCount}</div>
