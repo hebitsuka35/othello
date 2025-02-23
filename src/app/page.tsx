@@ -33,6 +33,8 @@ export default function Home() {
     [0, -1],
     [1, -1],
   ];
+  //連続でパスの回数を記録する。
+  const [continuePassCount, setContinuePassCount] = useState(0);
 
   //// ------関数宣言------
   //// ------判定系------
@@ -126,6 +128,7 @@ export default function Home() {
   const resetBoard = (): void => {
     setBoard(InitialBoard);
     setTurnColor(1);
+    setContinuePassCount(0);
   };
   //盤面上(x,y)に自分のオセロの石を置いたときに、8方向の石を反転させる。
   const flipStones = (x: number, y: number, turnColor: number, board: number[][]): number[][] => {
@@ -165,32 +168,40 @@ export default function Home() {
       isInBoard(x, y) &&
       isZero(x, y, board) &&
       hasArroundOppColor(x, y, turnColor) &&
-      canSetTurnColor(x, y, turnColor, board)
+      canSetTurnColor(x, y, turnColor, board) &&
+      continuePassCount <= 1
     ) {
       newBoard[y][x] = turnColor;
       const flippedBoard = flipStones(x, y, turnColor, newBoard);
       setTurnColor(OppoColor);
       setBoard(flippedBoard);
+      setContinuePassCount(0);
     }
   };
   //パスをする関数を意味する。
   const passTurn = () => {
+    if (continuePassCount >= 2) return;
+    const newContinuePassCount = continuePassCount + 1;
+    setContinuePassCount(newContinuePassCount);
     setTurnColor(OppoColor);
     setBoard(board);
+
+    if (newContinuePassCount >= 2) {
+      alert('2連続でパスするとゲーム終了となります。');
+    }
   };
 
   // //全ての盤面に石が載った場合は、ゲーム終了のメッセージを表示する。
   // const DisplayGameOver = () => (isOrNotGameOver(board) ? `ゲーム終了です。` : ``);
-
   const dispayGameResult = (board: number[][]): string => {
-    if (isOrNotGameOver(board)) {
+    if (continuePassCount >= 2 || isOrNotGameOver(board)) {
       const { blackCount, whiteCount } = countStones(board);
       if (blackCount > whiteCount) {
-        return 'ゲーム終了です。黒の勝ちです。';
+        return 'ゲーム終了です。黒の勝ちです。リセットを押してください。';
       } else if (blackCount < whiteCount) {
-        return 'ゲーム終了です。白の勝ちです。';
+        return 'ゲーム終了です。白の勝ちです。リセットを押してください。';
       } else {
-        return 'ゲーム終了です。引き分けです。';
+        return 'ゲーム終了です。引き分けです。リセットを押してください。';
       }
     }
     return 'ゲーム中です。';
@@ -209,6 +220,8 @@ export default function Home() {
           パス
         </button>
       </div>
+      <div>連続パス回数: {continuePassCount}</div>
+      <div>※2連続でパスするとゲーム終了となります。</div>
       <div>------------------------------------------------</div>
       <div>
         <button className={styles.resetButton} onClick={resetBoard}>
