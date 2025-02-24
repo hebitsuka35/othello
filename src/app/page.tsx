@@ -35,6 +35,8 @@ export default function Home() {
   ];
   //連続でパスした回数を記録する。
   const [continuePassCount, setContinuePassCount] = useState<number>(0);
+  //一時保存をしているかどうかを意味する。
+  const [saveCount, setSaveCount] = useState(0);
 
   //// ------関数宣言------
   //// ------判定系------
@@ -206,16 +208,72 @@ export default function Home() {
       const { blackCount, whiteCount } = countStones(board);
       if (blackCount > whiteCount) {
         return 'ゲーム終了です。黒の勝ちです。リセットを押してください。';
-        alert('test');
       } else if (blackCount < whiteCount) {
         return 'ゲーム終了です。白の勝ちです。リセットを押してください。';
-        alert('test');
       } else {
         return 'ゲーム終了です。引き分けです。リセットを押してください。';
-        alert('test');
       }
     }
     return '';
+  };
+
+  //盤面の情報をlocalStorageに一時保存する機能
+  function saveToLocalStorage(key: string, value: number[][]) {
+    if (saveCount === 0) {
+      try {
+        const boardCurrentState = JSON.stringify(value);
+        localStorage.setItem(key, boardCurrentState);
+        setSaveCount(saveCount + 1);
+        alert('一時保存しました。');
+      } catch (e) {
+        alert('保存中にエラーが発生しました。consoleで確認してください');
+        console.error('localStorageの保存中にエラーが発生しました:', e);
+      }
+    } else {
+      alert(
+        'すでに一時保存済みデータがあるため、一時保存できません。一時保存したい場合は、一時保存削除をクリックしてから一時保存をしてください。',
+      );
+    }
+  }
+
+  //localStorageの一時保存データを削除する機能
+  const deleteLocalStorage = () => {
+    if (saveCount === 1) {
+      try {
+        localStorage.clear();
+        setSaveCount(0);
+        alert('一時保存データを削除しました。');
+      } catch (e) {
+        alert('一時保存削除中にエラーが発生しました。consoleで確認してください');
+        console.error('localStorageの一時保存削除中にエラーが発生しました:', e);
+      }
+    } else {
+      alert('一時保存済みデータがありません。');
+    }
+  };
+
+  //一時保存の状態に戻す関数
+  const loadFromLocalStorage = () => {
+    if (localStorage.length >= 1) {
+      alert('一時保存復元をします。');
+      try {
+        const key = localStorage.key(0);
+        if (key !== null) {
+          const value = localStorage.getItem(key);
+          const turnColor = Number(key);
+          setTurnColor(turnColor);
+          if (value !== null) {
+            const board = JSON.parse(value);
+            setBoard(board);
+          }
+        }
+      } catch (e) {
+        alert('データ取得中にエラーが発生しました。consoleで確認してください');
+        console.error('localStorageのデータ取得中にエラーが発生しました:', e);
+      }
+    } else {
+      alert('一時保存データがありません。');
+    }
   };
 
   return (
@@ -259,6 +317,18 @@ export default function Home() {
         </button>
         <button className={styles.button} onClick={resetBoard}>
           リセット
+        </button>
+        <button
+          className={styles.button}
+          onClick={() => saveToLocalStorage(JSON.stringify(turnColor), board)}
+        >
+          一時保存
+        </button>
+        <button className={styles.button} onClick={() => deleteLocalStorage()}>
+          一時保存削除
+        </button>
+        <button className={styles.button} onClick={() => loadFromLocalStorage()}>
+          一時保存復元
         </button>
       </div>
     </>
