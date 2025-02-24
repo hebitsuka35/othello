@@ -89,10 +89,32 @@ export default function Home() {
 
   //盤面上に候補地があるかどうかを判定する。
   const checkCanSetTurnColor = (turnColor: number, board: number[][]): boolean => {
+    const OppoColor = turnColor === 1 ? 2 : 1;
     for (let y = 0; y < board.length; y++) {
       for (let x = 0; x < board[y].length; x++) {
-        if (canSetTurnColor(x, y, turnColor, board)) {
-          return true;
+        if (board[y][x] !== 0) continue;
+
+        for (const [dx, dy] of directions) {
+          let distanceFromX = x + dx;
+          let distanceFromY = y + dy;
+          let hasOpponentBetween = false;
+
+          while (
+            isInBoard(distanceFromX, distanceFromY) &&
+            board[distanceFromY][distanceFromX] === OppoColor
+          ) {
+            hasOpponentBetween = true;
+            distanceFromX += dx;
+            distanceFromY += dy;
+          }
+
+          if (
+            hasOpponentBetween &&
+            isInBoard(distanceFromX, distanceFromY) &&
+            board[distanceFromY][distanceFromX] === turnColor
+          ) {
+            return true;
+          }
         }
       }
     }
