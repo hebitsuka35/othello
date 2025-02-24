@@ -57,6 +57,19 @@
   background-color: #ff7f32;
 }
 
+.displayGameResultMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.5rem;
+  margin: 10px;
+  font-size: large;
+  font-weight: bold;
+  color: black;
+  text-align: center;
+}
+
 .passMessage {
   display: flex;
   flex-direction: column;

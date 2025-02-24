@@ -229,14 +229,14 @@ export default function Home() {
     if (continuePassCount >= 2 || isOrNotGameOver(board)) {
       const { blackCount, whiteCount } = countStones(board);
       if (blackCount > whiteCount) {
-        return 'ゲーム終了です。黒の勝ちです。リセットを押してください。';
+        return 'ゲーム終了です。黒の勝ちです。';
       } else if (blackCount < whiteCount) {
-        return 'ゲーム終了です。白の勝ちです。リセットを押してください。';
+        return 'ゲーム終了です。白の勝ちです。';
       } else {
-        return 'ゲーム終了です。引き分けです。リセットを押してください。';
+        return 'ゲーム終了です。引き分けです。';
       }
     }
-    return '';
+    return 'ゲーム中です。';
   };
 
   //盤面の情報をlocalStorageに一時保存する機能
@@ -306,7 +306,6 @@ export default function Home() {
         <span className={styles.span}>候補地：オレンジ色🟠</span>
         <span className={styles.span}>黒色⚫️の数：{countStones(board).blackCount}</span>
         <span className={styles.span}>白色⚪️の数：{countStones(board).whiteCount}</span>
-        <span>{dispayGameResult(board)}</span>
       </div>
       <div className={styles.container}>
         <div className={styles.board}>
@@ -327,9 +326,10 @@ export default function Home() {
           )}
         </div>
       </div>
-      <div className={styles.passMessage}>
-        <div>
-          候補地がない場合、パスを押してください。2連続パスの場合ゲーム終了です。連続パス回数:{' '}
+      <div>
+        <div className={styles.displayGameResultMessage}>{dispayGameResult(board)}</div>
+        <div className={styles.passMessage}>
+          候補地がない場合、パスを押してください。2連続パスの場合は、ゲーム終了です。連続パス回数:{' '}
           {continuePassCount}
         </div>
       </div>
