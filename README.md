@@ -10,3 +10,5 @@ git . add
 git commit -m 'コメント'  
 git push origin main  
 
+・元テンプレート格納先
+https://github.com/solufa/next-ts-starter
