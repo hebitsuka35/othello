@@ -237,6 +237,10 @@ export default function Home() {
    * パスをする関数を意味する。
    */
   const passTurn = (): void => {
+    if (isOrNotGameOver(board)) {
+      return;
+    }
+
     if (checkCanSetTurnColor(turnColor, board)) {
       alert('候補地があるのでパスできません。');
       return;
