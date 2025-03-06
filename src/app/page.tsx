@@ -40,6 +40,7 @@ export default function Home() {
 
   //// ------関数宣言------
   //// ------判定系------
+  //#region
   /**
    * 盤面の範囲内にオセロの石をおけるかを判定することを意味する。
    */
@@ -61,6 +62,7 @@ export default function Home() {
     }
     return false;
   };
+  //#region
   /**
    * 石を置くことができるか確認する関数。
    */
@@ -93,7 +95,9 @@ export default function Home() {
     }
     return false;
   };
+  //#endregion
 
+  //#region
   /**
    * 盤面上に候補地があるかどうかを判定する。
    */
@@ -129,6 +133,8 @@ export default function Home() {
     }
     return false;
   };
+  //#endregion
+
   /**
    * 盤面上に1,2のいずれかが置かれて、オセロゲームが終了するかどうかを判定する。
    */
@@ -142,9 +148,11 @@ export default function Home() {
     }
     return true;
   };
+  //#endregion
 
   //// ------関数宣言------
   //// ------実行系------
+  //#region
   /**
    * 盤面のオセロの色の数量を計算することを意味する。
    */
@@ -171,6 +179,7 @@ export default function Home() {
     setContinuePassCount(0);
     alert('リセットします。');
   };
+  //#region
   /**
    * 盤面上(x,y)に自分のオセロの石を置いたときに、8方向の石を反転させる。
    */
@@ -202,6 +211,7 @@ export default function Home() {
     }
     return newBoard;
   };
+  //#endregion
 
   /**
    * onClickのクリックイイベントで取得したx,y座標に対してオセロの石を配置する関数を意味する。
@@ -325,6 +335,7 @@ export default function Home() {
       alert('一時保存データがありません。');
     }
   };
+  //#endregion
 
   return (
     <>
