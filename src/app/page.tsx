@@ -40,10 +40,15 @@ export default function Home() {
 
   //// ------関数宣言------
   //// ------判定系------
-  //盤面の範囲内にオセロの石をおけるかを判定することを意味する。
+  /**
+   * 盤面の範囲内にオセロの石をおけるかを判定することを意味する。
+   */
   const isInBoard = (x: number, y: number): boolean =>
     x >= 0 && x < board.length && y >= 0 && y < board.length;
-  //盤面が黒(1)でもなく白(2)でもなく、0であるかを判定することを意味する。
+
+  /**
+   * 盤面が黒(1)でもなく白(2)でもなく、0であるかを判定することを意味する。
+   */
   const isZero = (x: number, y: number, board: number[][]): boolean => board[y][x] === 0;
   //石を置いたときに、8方向に反対の石の色があるかを判定する関数
   const hasArroundOppColor = (x: number, y: number): boolean => {
@@ -56,7 +61,9 @@ export default function Home() {
     }
     return false;
   };
-  // 石を置くことができるか確認する関数。
+  /**
+   * 石を置くことができるか確認する関数。
+   */
   const canSetTurnColor = (x: number, y: number, turnColor: number, board: number[][]): boolean => {
     if (hasArroundOppColor(x, y)) {
       const OppoColor = turnColor === 1 ? 2 : 1;
@@ -87,7 +94,9 @@ export default function Home() {
     return false;
   };
 
-  //盤面上に候補地があるかどうかを判定する。
+  /**
+   * 盤面上に候補地があるかどうかを判定する。
+   */
   const checkCanSetTurnColor = (turnColor: number, board: number[][]): boolean => {
     const OppoColor = turnColor === 1 ? 2 : 1;
     for (let y = 0; y < board.length; y++) {
@@ -120,7 +129,9 @@ export default function Home() {
     }
     return false;
   };
-  //盤面上に1,2のいずれかが置かれて、オセロゲームが終了するかどうかを判定する。
+  /**
+   * 盤面上に1,2のいずれかが置かれて、オセロゲームが終了するかどうかを判定する。
+   */
   const isOrNotGameOver = (board: number[][]): boolean => {
     for (let y = 0; y < board.length; y++) {
       for (let x = 0; x < board[y].length; x++) {
@@ -134,7 +145,9 @@ export default function Home() {
 
   //// ------関数宣言------
   //// ------実行系------
-  //盤面のオセロの色の数量を計算することを意味する。
+  /**
+   * 盤面のオセロの色の数量を計算することを意味する。
+   */
   const countStones = (board: number[][]): { blackCount: number; whiteCount: number } => {
     let blackCount: number = 0,
       whiteCount: number = 0;
@@ -149,14 +162,18 @@ export default function Home() {
     );
     return { blackCount, whiteCount };
   };
-  //初期盤面の状態にして、1:黒のオセロの色の石からスタートすることを意味する。
+  /**
+   *初期盤面の状態にして、1:黒のオセロの色の石からスタートすることを意味する。
+   */
   const resetBoard = (): void => {
     setBoard(InitialBoard);
     setTurnColor(1);
     setContinuePassCount(0);
     alert('リセットします。');
   };
-  //盤面上(x,y)に自分のオセロの石を置いたときに、8方向の石を反転させる。
+  /**
+   * 盤面上(x,y)に自分のオセロの石を置いたときに、8方向の石を反転させる。
+   */
   const flipStones = (x: number, y: number, turnColor: number, board: number[][]): number[][] => {
     const newBoard = structuredClone(board);
     for (const [dx, dy] of directions) {
@@ -186,8 +203,9 @@ export default function Home() {
     return newBoard;
   };
 
-  // onClickのクリックイイベントで取得したx,y座標に対して
-  // オセロの石を配置する関数を意味する。
+  /**
+   * onClickのクリックイイベントで取得したx,y座標に対してオセロの石を配置する関数を意味する。
+   */
   const placeTurnColor = (x: number, y: number): void => {
     const newBoard = structuredClone(board);
     if (
@@ -205,7 +223,9 @@ export default function Home() {
     }
   };
 
-  //パスをする関数を意味する。
+  /**
+   * パスをする関数を意味する。
+   */
   const passTurn = (): void => {
     if (checkCanSetTurnColor(turnColor, board)) {
       alert('候補地があるのでパスできません。');
@@ -223,8 +243,10 @@ export default function Home() {
     }
   };
 
-  // //全ての盤面に石が載った場合は、ゲーム終了のメッセージを表示する。
-  // const DisplayGameOver = () => (isOrNotGameOver(board) ? `ゲーム終了です。` : ``);
+  /**
+   * 全ての盤面に石が載った場合は、ゲーム終了のメッセージを表示する
+   * const DisplayGameOver = () => (isOrNotGameOver(board) ? `ゲーム終了です。` : ``);
+   */
   const dispayGameResult = (board: number[][]) => {
     if (continuePassCount >= 2 || isOrNotGameOver(board)) {
       const { blackCount, whiteCount } = countStones(board);
@@ -239,7 +261,9 @@ export default function Home() {
     return 'ゲーム中です。';
   };
 
-  //盤面の情報をlocalStorageに一時保存する機能
+  /**
+   * 盤面の情報をlocalStorageに一時保存する機能
+   */
   function saveToLocalStorage(key: string, value: number[][]) {
     if (saveCount === 0) {
       try {
@@ -258,7 +282,9 @@ export default function Home() {
     }
   }
 
-  //localStorageの一時保存データを削除する機能
+  /**
+   * localStorageの一時保存データを削除する機能
+   */
   const deleteLocalStorage = () => {
     if (saveCount === 1) {
       try {
@@ -274,7 +300,9 @@ export default function Home() {
     }
   };
 
-  //一時保存の状態に戻す関数
+  /**
+   * 一時保存の状態に戻す関数
+   */
   const loadFromLocalStorage = () => {
     if (localStorage.length >= 1) {
       alert('一時保存復元をします。');
