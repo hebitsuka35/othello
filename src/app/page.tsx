@@ -395,6 +395,7 @@ export default function Home() {
         <button className={styles.button} onClick={() => loadFromLocalStorage()}>
           一時保存復元
         </button>
+        <button className={styles.button}>支払</button>
       </div>
     </>
   );

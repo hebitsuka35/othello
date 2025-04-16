@@ -1,0 +1,11 @@
+{
+  "keystore": {
+    "xpub": "zpub6rKuSLBeoMUH1CG3DGyjUzfH2SDv3kN6vN2w4ZGGf1pLSxtiDjCF9iw4KeXYae8fkrxDy216J5UKGnscGdFxDasSakh5T3aUoYZam9KQEyS",
+    "xprv": "zprvAXh9TU6hL4tzDQJB1H4SBTRX5jebY7JuMSj88bEf5sCeHRj8ZLMyEssnDdaww2oFUNCi89PN9WyfyykxRrsGKPP2pzJE9fXVNphHGXrcaw6",
+    "type": "bip32",
+    "pw_hash_version": 1
+  },
+  "wallet_type": "standard",
+  "use_encryption": false,
+  "seed_type": "bip39"
+}
