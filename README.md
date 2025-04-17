@@ -1,59 +1,3 @@
-必要最低限の機能とディレクトリ構成に絞ったシンプルな提案を以下に示します。構成をさらに削減し、重要なポイントだけを確保するようにしています。
-
----
-
-### 最小限のディレクトリ構成
-
-```
-├── /app
-│   ├── /api
-│   │   ├── createInvoice.ts   // サーバーサイドでBTCPayServerを通じて請求書を作成するAPI
-│   ├──
-|   ├── /components
-|   |   ├──indexCreateInvice.tsx   / エンドポイント
-```
-
-### 各ファイルの詳細
-
-#### 1. `indexCreateInvice.tsx` (フロントエンド)
-
-シンプルな支払いボタンと支払いフローを提供するホームページを実装します。
-
-```tsx
-import { useState } from 'react';
-
-export default function indexCreateInvoice() {
-  const [loading, setLoading] = useState(false);
-
-  const handlePayment = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('/api/createInvoice', { method: 'POST' });
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url; // BTCPayServerの支払いページへリダイレクト
-      } else {
-        alert('Error creating invoice');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h1>Welcome to Bitcoin Payment</h1>
-      <p>Click the button below to pay:</p>
-      <button onClick={handlePayment} disabled={loading}>
-        {loading ? 'Loading...' : 'Pay with Bitcoin'}
-      </button>
-    </div>
-  );
-}
-```
-
 #### 2. `createInvoice.ts` (APIルート)
 
 BTCPayServerに請求書を作成するバックエンドのAPIを用意します。
@@ -113,22 +57,6 @@ BTCPAY_STORE_ID=your-btcpay-store-id-here
 ```
 
 ---
-
-#### 4. `.page.tsx`
-
-下記を行い、index.tsxを取り込む
-\*\*\*は、index.tsxのコンポーネントを指すが、あるべき名称に変更する必要がある。
-
-import createInvoice from "";
-
-export default function Home() {
-return (
-
-<div>
-  <indexCreateInvoice />
-</div>
-);
-}
 
 オセロの動作確認方法
 
