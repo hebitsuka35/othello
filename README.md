@@ -1,3 +1,135 @@
+必要最低限の機能とディレクトリ構成に絞ったシンプルな提案を以下に示します。構成をさらに削減し、重要なポイントだけを確保するようにしています。
+
+---
+
+### 最小限のディレクトリ構成
+
+```
+├── /app
+│   ├── /api
+│   │   ├── createInvoice.ts   // サーバーサイドでBTCPayServerを通じて請求書を作成するAPI
+│   ├──
+|   ├── /components
+|   |   ├──indexCreateInvice.tsx   / エンドポイント
+```
+
+### 各ファイルの詳細
+
+#### 1. `indexCreateInvice.tsx` (フロントエンド)
+
+シンプルな支払いボタンと支払いフローを提供するホームページを実装します。
+
+```tsx
+import { useState } from 'react';
+
+export default function createInvoice() {
+  const [loading, setLoading] = useState(false);
+
+  const handlePayment = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/createInvoice', { method: 'POST' });
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url; // BTCPayServerの支払いページへリダイレクト
+      } else {
+        alert('Error creating invoice');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+      <h1>Welcome to Bitcoin Payment</h1>
+      <p>Click the button below to pay:</p>
+      <button onClick={handlePayment} disabled={loading}>
+        {loading ? 'Loading...' : 'Pay with Bitcoin'}
+      </button>
+    </div>
+  );
+}
+```
+
+#### 2. `createInvoice.ts` (APIルート)
+
+BTCPayServerに請求書を作成するバックエンドのAPIを用意します。
+
+```tsx
+import type { NextApiRequest, NextApiResponse } from 'next';
+
+export default async function createInvoice(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const { BTCPAY_SERVER_URL, BTCPAY_API_KEY, BTCPAY_STORE_ID } = process.env;
+
+  if (!BTCPAY_SERVER_URL || !BTCPAY_API_KEY || !BTCPAY_STORE_ID) {
+    return res.status(500).json({ error: 'Server environment variables not set' });
+  }
+
+  try {
+    const response = await fetch(`${BTCPAY_SERVER_URL}/api/v1/invoices`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${BTCPAY_API_KEY}`,
+      },
+      body: JSON.stringify({
+        amount: 1, // 支払い金額 (USD)
+        currency: 'JPY',
+        storeId: BTCPAY_STORE_ID,
+      }),
+    });
+
+    const invoice = await response.json();
+
+    if (response.ok) {
+      res.status(200).json({ url: invoice.checkoutLink }); // 支払いページのリンクを返す
+    } else {
+      throw new Error(invoice.message || 'Failed to create invoice');
+    }
+  } catch (error: any) {
+    console.error('Error creating invoice:', error.message);
+    res.status(500).json({ error: 'Failed to create invoice' });
+  }
+}
+```
+
+---
+
+#### 3. `.env.local`
+
+BTCPayServer関連の秘密情報や設定を保存する環境変数ファイル。
+
+```env
+BTCPAY_SERVER_URL=https://your-btcpay-server-url-here
+BTCPAY_API_KEY=your-btcpay-api-key-here
+BTCPAY_STORE_ID=your-btcpay-store-id-here
+```
+
+---
+
+#### 4. `.page.tsx`
+
+下記を行い、index.tsxを取り込む
+\*\*\*は、index.tsxのコンポーネントを指すが、あるべき名称に変更する必要がある。
+
+import createInvoice from "";
+
+export default function Home() {
+return (
+
+<div>
+  <indexCreateInvoice />
+</div>
+);
+}
+
 オセロの動作確認方法
 
 １.vercel
@@ -53,3 +185,7 @@ git push origin main
 
 99.プロジェクトの元テンプレート格納先
 https://github.com/solufa/next-ts-starter
+
+```
+
+```
