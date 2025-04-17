@@ -22,7 +22,7 @@
 ```tsx
 import { useState } from 'react';
 
-export default function createInvoice() {
+export default function indexCreateInvoice() {
   const [loading, setLoading] = useState(false);
 
   const handlePayment = async () => {

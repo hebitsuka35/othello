@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import IndexCreateInvoice from './components/indexCreateInvoice';
 import styles from './css/page.module.css';
+
 export default function Home() {
   //// ------変数/状態管理宣言------
   //turnColorは現在のターンで配置する石の色を意味する。1は黒、2は白を意味する。
@@ -395,7 +397,7 @@ export default function Home() {
         <button className={styles.button} onClick={() => loadFromLocalStorage()}>
           一時保存復元
         </button>
-        <button className={styles.button}>支払</button>
+        <IndexCreateInvoice />
       </div>
     </>
   );
