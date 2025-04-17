@@ -6,7 +6,7 @@ export default function indexCreateInvoice() {
   return (
     <>
       <div>
-        <button className={styles.button}>支払</button>
+        <button className={styles.donationButton}>Donation</button>
       </div>
     </>
   );

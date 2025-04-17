@@ -97,3 +97,13 @@
   border: 1px solid gray;
   border-radius: 10%;
 }
+
+.donationButton {
+  width: 100px;
+  height: 30px;
+  margin: 10px;
+  cursor: pointer;
+  background-color: orange;
+  border: 1px solid orangered;
+  border-radius: 10%;
+}
