@@ -27,7 +27,7 @@ export default function IIndexCreateInvoice() {
     <>
       <div>
         <button className={styles.donationButton} onClick={handlePayment} disabled={loading}>
-          {loading ? 'Loading' : 'チップ'}
+          {loading ? '支払い処理中' : '支払う'}
         </button>
       </div>
     </>
