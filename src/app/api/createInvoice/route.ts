@@ -1,16 +1,14 @@
-'use Client';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
-import type { NextApiRequest, NextApiResponse } from 'next';
-
-export default async function createInvoice(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export async function POST(_request: NextRequest) {
   const { BTCPAY_SERVER_URL, BTCPAY_API_KEY, BTCPAY_STORE_ID } = process.env;
 
   if (!BTCPAY_SERVER_URL || !BTCPAY_API_KEY || !BTCPAY_STORE_ID) {
-    return res.status(500).json({ error: 'サーバが見つかりません。設定を見直してください。' });
+    return NextResponse.json(
+      { error: 'サーバが見つかりません。設定を見直してください。' },
+      { status: 500 },
+    );
   }
 
   try {
@@ -24,22 +22,29 @@ export default async function createInvoice(req: NextApiRequest, res: NextApiRes
         amount: 10,
         currency: 'JPY',
         storeId: BTCPAY_STORE_ID,
+        checkout: {
+          paymentMethods: ['BTC-LightningNetwork'],
+          defaultPaymentMethod: 'BTC-LightningNetwork',
+        },
       }),
     });
 
     const invoice = await response.json();
 
     if (response.ok) {
-      res.status(200).json({
+      return NextResponse.json({
         url: invoice.checkoutLink,
       });
     } else {
       throw new Error(invoice.message || '失敗しました。');
     }
   } catch (error) {
-    console.error('Error createing invoice:', error);
-    res.status(500).json({
-      error: '失敗しました。',
-    });
+    console.error('Error creating invoice:', error);
+    return NextResponse.json(
+      {
+        error: '失敗しました。',
+      },
+      { status: 500 },
+    );
   }
 }
