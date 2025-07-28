@@ -36,8 +36,8 @@ export default function IIndexCreateInvoice() {
   return (
     <>
       <div>
-        <button className={styles.donationButton} onClick={handlePayment}>
-          ⚡ 支払う
+        <button className={styles.kihuButton} onClick={handlePayment}>
+          ⚡ 寄付
         </button>
       </div>
 
@@ -52,7 +52,7 @@ export default function IIndexCreateInvoice() {
             </div>
             <div className={styles.modalBody}>
               <div className={styles.qrContainer}>
-                <img 
+                <img
                   src="/qr-code.png"
                   alt="QR Code"
                   className={styles.qrCode}
