@@ -36,8 +36,8 @@ export default function IIndexCreateInvoice() {
   return (
     <>
       <div>
-        <button className={styles.donationButton} onClick={handlePayment}>
-          ⚡ 支払う
+        <button className={styles.kihuButton} onClick={handlePayment}>
+          ⚡ 寄付
         </button>
       </div>
 
